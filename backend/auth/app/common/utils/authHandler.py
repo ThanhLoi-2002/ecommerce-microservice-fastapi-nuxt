@@ -1,19 +1,18 @@
 import jwt
-from ..config.config import settings
 import time
 from .timeHelper import parse_duration
-
+from app.core.config import settings
 
 class AuthHandler(object):
     @staticmethod
     def sign_jwt(data: dict) -> str:
         payload = {
             **data,  # merge data
-            "expires": int(time.time()) + parse_duration(settings.JWT_EXPRIES),
+            "expires": int(time.time()) + parse_duration(settings.ACCESS_TOKEN_EXPIRE),
         }
 
         token = jwt.encode(
-            payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM
+            payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM
         )
         return token
 
@@ -21,7 +20,7 @@ class AuthHandler(object):
     def decode_jwt(token: str) -> dict:
         try:
             decoded_token = jwt.decode(
-                token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM]
+                token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
             )
             return decoded_token if decoded_token["expires"] >= time.time() else None
         except Exception as e:

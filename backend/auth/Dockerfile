@@ -13,5 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Sao chép mã nguồn vào image
 COPY . .
 
+EXPOSE 8001
 # Chạy FastAPI với lệnh dev
 CMD ["fastapi", "dev", "main.py", "--port", "8001"]

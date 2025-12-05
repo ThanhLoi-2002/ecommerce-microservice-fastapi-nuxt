@@ -1,6 +1,6 @@
 from app.modules.user.userModel import User
 from .dto.userValidatorDto import CreateUserDto
-from ...common.base.baseService import BaseService
+from ...core.baseService import BaseService
 
 
 class UserService(BaseService):

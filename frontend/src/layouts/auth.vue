@@ -1,8 +1,9 @@
 <template>
-  <div class="bg-slate-200 h-screen flex justify-center">
-    1234
-    <main>
-    <slot />
-    </main>
+  <div class="container h-100 d-flex justify-content-center align-items-center">
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-center">
+        <slot />
+      </div>
+    </div>
   </div>
 </template>

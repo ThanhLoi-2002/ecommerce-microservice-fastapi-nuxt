@@ -1,97 +1,81 @@
 <template>
-  <div class="bg-white h-screen">
-    <div class="flex justify-between">
-      <div></div>
-      <div class="w-[300px] mt-20">
-        <div class="flex flex-col gap-2">
-          <h1 class="text-2xl mb-3">Sign up</h1>
-          <FormError :errors="v$.name.$errors">
-            <BaseInput
-              v-model="registerInput.name"
-              :type="'text'"
-              :placeholder="'name'"
-            />
-          </FormError>
+  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card p-4 shadow" style="width: 400px">
+      <h4 class="text-center mb-4">Đăng ký</h4>
 
-          <FormError :errors="v$.email.$errors">
-            <BaseInput
-              v-model="registerInput.email"
-              :type="'text'"
-              :placeholder="'info@gmail.com'"
-            />
-          </FormError>
+      <form @submit.prevent="onSubmit" novalidate>
+        <InputField
+          label="Họ tên"
+          v-model="values.name"
+          :error="errors.name"
+          required
+        />
+        <!-- Họ tên
+        <div class="form-group mb-3">
+          <label className="d-flex align-items-center font-weight-normal">
+            Họ tên {isRequired &&
+            <div className="has-error">*</div>
+            }
+          </label>
 
-          <FormError :errors="v$.password.$errors">
-            <BaseInput
-              v-model="registerInput.password"
-              :type="'password'"
-              :placeholder="'password'"
-            />
-          </FormError>
+          <input
+            v-model="values.name"
+            type="text"
+            class="form-control"
+            :class="{ 'is-invalid': errors.name }"
+          />
+          <div class="invalid-feedback">{{ errors.name }}</div>
+        </div> -->
 
-          <BaseBtn
-            @click="submitInput"
-            :loading="loading"
-            label="Sign up"
-          ></BaseBtn>
-
-          <p
-            class="text-sm font-normal text-center text-gray-700 dark:text-gray-500 sm:text-start"
-          >
-            Already have an account?
-            <router-link
-              to="/signin"
-              class="text-indigo-500 hover:text-brand-600 font-semibold"
-              >Sign in</router-link
-            >
-          </p>
+        <!-- Email -->
+        <div class="form-group mb-3">
+          <label>Email</label>
+          <input
+            v-model="values.email"
+            type="email"
+            class="form-control"
+            :class="{ 'is-invalid': errors.email }"
+          />
+          <div class="invalid-feedback">{{ errors.email }}</div>
         </div>
-      </div>
-      <div></div>
+
+        <!-- Mật khẩu -->
+        <div class="form-group mb-3">
+          <label>Mật khẩu</label>
+          <input
+            v-model="values.password"
+            type="password"
+            class="form-control"
+            :class="{ 'is-invalid': errors.password }"
+          />
+          <div class="invalid-feedback">{{ errors.password }}</div>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit">Đăng ký</button>
+
+        <div class="text-center mt-3">
+          <small>
+            Bạn đã có tài khoản?
+            <router-link to="/login">Đăng nhập</router-link>
+          </small>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { useVuelidate } from "@vuelidate/core";
-import { required, email } from "@vuelidate/validators";
-import { useSignUpStore } from '../../stores/auth.store'
+<script setup lang="ts">
 
-const rules = {
-  name: { required },
-  email: { required, email }, // Matches state.firstName
-  password: { required }, // Matches state.lastName
-};
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { signupSchema } from "../../schemas/auth";
+import InputField from "@/components/common/input/InputField.vue";
 
-const signUpStore = useSignUpStore();
-const { registerInput } = storeToRefs(signUpStore);
+const { handleSubmit, errors, values } = useForm({
+  validationSchema: toTypedSchema(signupSchema),
+});
 
-const v$ = useVuelidate(rules, registerInput);
-const loading = ref(false);
-const router = useRouter();
-
-async function submitInput() {
-  const isValid = await v$.$validate();
-  if (!isValid) return;
-  try {
-    loading.value = true;
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(registerInput.value),
-    });
-    loading.value = false;
-    router.push("/auth/email-verification");
-  } catch (error) {
-    loading.value = false;
-    console.error(error);
-  }
-}
-
-function showLoginOrSignUpError(error) {
-  console.error(error);
-}
+const onSubmit = handleSubmit((formData) => {
+  console.log("Form submit:", formData);
+});
 </script>

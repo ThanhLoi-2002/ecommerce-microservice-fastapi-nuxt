@@ -16,7 +16,6 @@ const route = useRoute();
 
 const layout = computed(() => {
   const name = route.meta.layout
-  console.log(name)
   switch (name) {
     case "auth":
       return AuthLayout

@@ -1,21 +1,29 @@
-<script setup>
-const props = defineProps(["type", "placeholder", "modelValue"]);
-
-const emit = defineEmits(["update:modelValue"]);
-
-function updateInput(event) {
-  const val = event.target.value;
-  emit("update:modelValue", val);
-}
-</script>
 <template>
-  <input
-    @input="updateInput"
-    :value="modelValue"
-    :type="typeof type !== 'undefined' ? type : 'text'"
-    name=""
-    :placeholder="placeholder"
-    id=""
-    class="focus:bg-focus-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 focus:border-gray-700 focus:focus:border-brand-800"
-  />
+  <div class="w-full">
+    <label v-if="label" class="block text-sm font-medium mb-1">{{ label }}</label>
+
+    <input
+      v-bind="$attrs"
+      :type="type"
+      v-model="model"
+      class="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+    />
+  </div>
 </template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+const props = defineProps<{
+  modelValue: string;
+  type?: string;
+  label?: string;
+}>();
+
+const emits = defineEmits(["update:modelValue"]);
+
+const model = computed({
+  get: () => props.modelValue,
+  set: (value) => emits("update:modelValue", value),
+});
+</script>

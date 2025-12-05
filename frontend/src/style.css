@@ -1,5 +1,8 @@
-@import "tailwindcss";
 
 html {
   scroll-behavior: smooth;
+}
+
+html, body, #app {
+  height: 100%;
 }

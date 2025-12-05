@@ -11,9 +11,9 @@ authRouter = APIRouter(
     route_class=ResponseInterceptorRoute, tags=["auth"], prefix="/auth"
 )
 
-@authRouter.get("/test/")
-async def read_items(api_key: CurrentUser):
-    return [{"item": "item1"}, {"item": "item2"}]
+# @authRouter.get("/test/")
+# async def read_items(api_key: CurrentUser):
+#     return [{"item": "item1"}, {"item": "item2"}]
 
 @authRouter.post("/login")
 @response_message("Logged in")

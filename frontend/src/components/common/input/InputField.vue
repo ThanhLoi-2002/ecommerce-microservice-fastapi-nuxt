@@ -1,3 +1,4 @@
+<!-- components/common/input/InputField.vue -->
 <template>
   <div class="form-group mb-3">
     <label class="d-flex align-items-center font-weight-normal">
@@ -6,31 +7,28 @@
     </label>
 
     <input
-      :value="modelValue"
-      :type="type"
+      :type="type || 'text'"
       class="form-control"
-      :class="{ 'is-invalid': error }"
-      @input="onInput"
+      :value="modelValue"
+      @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+      :required="required"
+      :name="name"
+      :placeholder="placeholder"
     />
-
-    <div class="invalid-feedback" v-if="error">
-      {{ error }}
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 const props = defineProps<{
   label: string;
-  modelValue: string;
+  name?: string;
   type?: string;
-  error?: string;
   required?: boolean;
+  modelValue: string;        // bắt buộc có để v-model hoạt động
+  placeholder?: string;
 }>();
 
-const emit = defineEmits(["update:modelValue"]);
-
-const onInput = (e: Event) => {
-  emit("update:modelValue", (e.target as HTMLInputElement).value);
-};
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+}>();
 </script>

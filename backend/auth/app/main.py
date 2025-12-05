@@ -67,22 +67,22 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 # format error 500
-# @app.middleware("http")
-# async def error_handling_middleware(request: Request, call_next):
-#     try:
-#         response = await call_next(request)
-#         # Check if the response code indicates an error
-#         if response.status_code >= 400:
-#             logger.error(f"Error {response.status_code}: {response.body.decode()}")
-#     except Exception as e:
-#         # Log the full stack trace for debugging
-#         logger.error(f"Error 500: {str(e)}", exc_info=True)
-#         # Return a more informative error response
-#         return JSONResponse(
-#             status_code=500,
-#             content={
-#                 "status": False,
-#                 "message": str(e),
-#             },
-#         )
-#     return response
+@app.middleware("http")
+async def error_handling_middleware(request: Request, call_next):
+    try:
+        response = await call_next(request)
+        # Check if the response code indicates an error
+        # if response.status_code >= 400:
+        #     logger.error(f"Error {response.status_code}: {response.body.decode()}")
+    except Exception as e:
+        # Log the full stack trace for debugging
+        logger.error(f"Error 500: {str(e)}", exc_info=True)
+        # Return a more informative error response
+        return JSONResponse(
+            status_code=500,
+            content={
+                "status": False,
+                "message": str(e),
+            },
+        )
+    return response

@@ -1,62 +1,21 @@
 <template>
   <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
     <div class="card p-4 shadow" style="width: 400px">
-      <h4 class="text-center mb-4">Đăng ký</h4>
+      <h4 class="text-center mb-4">Sign Up</h4>
 
-      <form @submit.prevent="onSubmit" novalidate>
-        <InputField
-          label="Họ tên"
-          v-model="values.name"
-          :error="errors.name"
-          required
-        />
-        <!-- Họ tên
-        <div class="form-group mb-3">
-          <label className="d-flex align-items-center font-weight-normal">
-            Họ tên {isRequired &&
-            <div className="has-error">*</div>
-            }
-          </label>
+      <form @submit.prevent="onSubmit">
+        <InputField label="Name" name="name" v-model="signUpForm.name" required />
 
-          <input
-            v-model="values.name"
-            type="text"
-            class="form-control"
-            :class="{ 'is-invalid': errors.name }"
-          />
-          <div class="invalid-feedback">{{ errors.name }}</div>
-        </div> -->
+        <InputField label="Email" name="email" v-model="signUpForm.email" required />
 
-        <!-- Email -->
-        <div class="form-group mb-3">
-          <label>Email</label>
-          <input
-            v-model="values.email"
-            type="email"
-            class="form-control"
-            :class="{ 'is-invalid': errors.email }"
-          />
-          <div class="invalid-feedback">{{ errors.email }}</div>
-        </div>
+        <InputField label="Password" name="password" v-model="signUpForm.password" type="password" required />
 
-        <!-- Mật khẩu -->
-        <div class="form-group mb-3">
-          <label>Mật khẩu</label>
-          <input
-            v-model="values.password"
-            type="password"
-            class="form-control"
-            :class="{ 'is-invalid': errors.password }"
-          />
-          <div class="invalid-feedback">{{ errors.password }}</div>
-        </div>
-
-        <button class="btn btn-primary w-100" type="submit">Đăng ký</button>
+        <button class="btn btn-primary w-100" type="submit">Sign Up</button>
 
         <div class="text-center mt-3">
           <small>
-            Bạn đã có tài khoản?
-            <router-link to="/login">Đăng nhập</router-link>
+            Already an account?
+            <router-link to="/signin">Login</router-link>
           </small>
         </div>
       </form>
@@ -65,17 +24,13 @@
 </template>
 
 <script setup lang="ts">
+import InputField from "../../components/common/input/InputField.vue";
+import { useAuth } from "../../composables/useAuth";
 
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/zod";
-import { signupSchema } from "../../schemas/auth";
-import InputField from "@/components/common/input/InputField.vue";
+const { signUpHandler, signUpForm } = useAuth()
 
-const { handleSubmit, errors, values } = useForm({
-  validationSchema: toTypedSchema(signupSchema),
-});
 
-const onSubmit = handleSubmit((formData) => {
-  console.log("Form submit:", formData);
-});
+const onSubmit = () => {
+  signUpHandler(signUpForm)
+};
 </script>

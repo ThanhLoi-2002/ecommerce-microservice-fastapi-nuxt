@@ -1,37 +1,21 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center">
-    <div class="card p-4 shadow" style="width: 380px">
-      <h4 class="text-center mb-4">Đăng nhập</h4>
+  <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="card p-4 shadow" style="width: 400px">
+      <h4 class="text-center mb-4">Sign In</h4>
 
-      <form @submit.prevent="onSubmit">
-        <div class="form-group mb-3">
-          <label>Email</label>
-          <input
-            v-model="email"
-            type="email"
-            class="form-control"
-            placeholder="Nhập email"
-            required
-          />
-        </div>
+      <form @submit.prevent="onSubmit" novalidate>
+        <InputField label="Email" name="email" type="email" v-model="signInForm.email" required
+          placeholder="user@gmail.com" />
 
-        <div class="form-group mb-3">
-          <label>Mật khẩu</label>
-          <input
-            v-model="password"
-            type="password"
-            class="form-control"
-            placeholder="Nhập mật khẩu"
-            required
-          />
-        </div>
+        <InputField label="Password" name="password" type="password" v-model="signInForm.password" required
+          placeholder="Enter password" />
 
-        <button class="btn btn-primary w-100" type="submit">Đăng nhập</button>
+        <button class="btn btn-primary w-100" type="submit">Sign Up</button>
 
         <div class="text-center mt-3">
-          <small
-            >Bạn chưa có tài khoản?
-            <router-link to="/signup">Đăng ký</router-link>
+          <small>
+            Already an account?
+            <router-link to="/signup">Sign up</router-link>
           </small>
         </div>
       </form>
@@ -40,12 +24,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { useAuth } from "../../composables/useAuth";
+import InputField from "../../components/common/input/InputField.vue";
 
-const email = ref("");
-const password = ref("");
+const { signInHandler, signInForm } = useAuth()
 
 const onSubmit = () => {
-  console.log("Login data:", email.value, password.value);
+  signInHandler(signInForm)
+  console.log("Submit:", signInForm);
 };
 </script>

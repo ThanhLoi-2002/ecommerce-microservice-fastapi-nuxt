@@ -1,11 +1,9 @@
-
-
 <script setup>
 const props = defineProps(["loading","label"]);
 </script>
 <template>
   <button
-  class=" flex justify-center bg-blue-500 text-white font-bold py-2 px-4 rounded flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+  class=" flex justify-center bg-blue-500 text-white font-bold py-2 px-4 rounded items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
   :disabled="loading"
 >
   <svg

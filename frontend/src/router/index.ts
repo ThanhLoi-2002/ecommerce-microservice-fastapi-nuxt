@@ -17,9 +17,15 @@ const routes = [
     meta: { layout: "auth" }
   },
   {
+    path: '/admin/dashboard',
+    component: () => import('../pages/admin/dashboard.vue'),
+    meta: { layout: "admin" }
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../pages/NotFound.vue'),
+    meta: { layout: "default" }
   },
 ]
 

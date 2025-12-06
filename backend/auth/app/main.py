@@ -1,21 +1,31 @@
-from fastapi import FastAPI, Request, HTTPException, Depends
+import asyncio
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.exceptions import RequestValidationError
-from app.core.db import Base, engine
-from app.modules.auth.authController import authRouter
-from app.modules.user.userController import userRouter
 from fastapi.responses import JSONResponse
-from app.common.utils.authHandler import AuthHandler
-from app.common.utils.logger import setup_logger
+from app.core.logging_config import setup_logging
 from app.core.config import settings
 from starlette.middleware.cors import CORSMiddleware
 import sentry_sdk
+from app.api.v1.api import api_router
+from app.db.base import Base
+from app.db.session import create_tables, engine
+from app.utils.logging_middleware import LoggingMiddleware
+from loguru import logger
 
-Base.metadata.create_all(bind=engine)
+# Base.metadata.create_all(bind=engine)
+
+setup_logging()
 
 app = FastAPI()
 
-if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
-    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+
+@app.on_event("startup")
+async def startup_event():
+    await create_tables()
+
+
+# if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
+#     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
 
 # Set all CORS enabled origins
 if settings.all_cors_origins:
@@ -27,11 +37,12 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
-logger = setup_logger(__name__)
+app.add_middleware(LoggingMiddleware)
 
-app.include_router(authRouter)
-app.include_router(userRouter)
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
+
+# format all errors
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     logger.error(f"Error {exc}")
@@ -64,25 +75,3 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "errors": formatted_errors,
         },
     )
-
-
-# format error 500
-@app.middleware("http")
-async def error_handling_middleware(request: Request, call_next):
-    try:
-        response = await call_next(request)
-        # Check if the response code indicates an error
-        # if response.status_code >= 400:
-        #     logger.error(f"Error {response.status_code}: {response.body.decode()}")
-    except Exception as e:
-        # Log the full stack trace for debugging
-        logger.error(f"Error 500: {str(e)}", exc_info=True)
-        # Return a more informative error response
-        return JSONResponse(
-            status_code=500,
-            content={
-                "status": False,
-                "message": str(e),
-            },
-        )
-    return response

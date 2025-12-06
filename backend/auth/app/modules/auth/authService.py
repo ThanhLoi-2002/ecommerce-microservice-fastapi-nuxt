@@ -1,10 +1,10 @@
-from app.modules.user.userModel import User
+from app.db.models.user import User
 from sqlalchemy.orm import Session
-from .dto.authValidatorDto import LoginDto, SignUpDto
+from ...schemas.auth import LoginDto, SignUpDto
 from ..user.userService import UserService
 from ...core.baseService import BaseService
-from ...common.utils.hashPass import HashHelper
-from ...common.utils.authHandler import AuthHandler
+from ...utils.hashPass import HashHelper
+from ...core.security import sign_jwt
 from fastapi import HTTPException, status
 
 
@@ -36,5 +36,5 @@ class AuthService(BaseService):
             )
 
         # create token
-        token = AuthHandler.sign_jwt({"user_id": user.id})
+        token = sign_jwt({"id": user.id})
         return {"token": token}

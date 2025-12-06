@@ -1,5 +1,5 @@
-from app.modules.user.userModel import User
-from .dto.userValidatorDto import CreateUserDto
+from app.db.models.user import User
+from app.schemas.user import CreateUserDto
 from ...core.baseService import BaseService
 
 

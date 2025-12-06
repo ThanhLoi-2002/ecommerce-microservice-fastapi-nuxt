@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 from app.db.base import Base
 
-engine = create_async_engine(settings.POSTGRES_DB_URL, echo=True, query_cache_size=0)
+engine = create_async_engine(settings.POSTGRES_DB_URL, future=True, execution_options={"compiled_cache": {}})
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 

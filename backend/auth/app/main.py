@@ -49,7 +49,7 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=exc.status_code,
         content={
-            "success": False,
+            # "success": False,
             "message": exc.detail,
         },
     )
@@ -70,7 +70,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     return JSONResponse(
         status_code=422,
         content={
-            "success": False,
+            # "success": False,
             "message": "Validation error",
             "errors": formatted_errors,
         },

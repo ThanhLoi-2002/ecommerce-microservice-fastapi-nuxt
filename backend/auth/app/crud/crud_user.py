@@ -3,6 +3,7 @@ from app.db.models.user import User
 from app.schemas.user import CreateUserDto
 from app.utils.hashPass import HashHelper
 
+
 class CRUDUser:
     @staticmethod
     async def get_one(db, filters: dict):

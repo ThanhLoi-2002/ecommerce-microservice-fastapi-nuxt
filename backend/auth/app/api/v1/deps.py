@@ -14,7 +14,7 @@ AsyncSessionDep = Annotated[AsyncSession, Depends(get_db)]
 TokenDep = Annotated[str, Depends(api_key_header)]
 
 
-def get_current_user(db: AsyncSessionDep, token: TokenDep) -> User:
+async def get_current_user(db: AsyncSessionDep, token: TokenDep) -> User:
     try:
         payload = decode_jwt(token)
 
@@ -31,7 +31,7 @@ def get_current_user(db: AsyncSessionDep, token: TokenDep) -> User:
             detail="Could not validate credentials",
         )
 
-    user = db.get(User, token_data.id)
+    user = await db.get(User, token_data.id)
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

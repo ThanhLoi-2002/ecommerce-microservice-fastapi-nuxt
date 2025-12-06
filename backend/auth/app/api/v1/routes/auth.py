@@ -25,6 +25,7 @@ async def login(data: LoginDto, db: AsyncSessionDep):
     token = sign_jwt({"id": user.id})
     return {"token": token}
 
+
 @router.post("/signup", response_model=UserResponse)
 @response_message("Sign up successfully")
 async def signup(data: SignUpDto, db: AsyncSessionDep):

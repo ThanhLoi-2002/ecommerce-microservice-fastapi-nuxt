@@ -3,10 +3,10 @@ from sqlalchemy import Column, Integer, String, Enum as SqlEnum
 from enum import Enum
 from sqlalchemy.orm import relationship
 
-from app.core.db import Base
+from app.db.base import Base
 
 
-class Role(str, Enum):
+class RoleEnum(str, Enum):
     ADMIN = "ADMIN"
     USER = "USER"
 
@@ -17,4 +17,4 @@ class User(Base):
     password = Column(String(255))
     name = Column(String(255))
     avatar = Column(String(255), nullable=True)
-    role = Column(SqlEnum(Role), nullable=False, default=Role.USER)
+    role = Column(SqlEnum(RoleEnum), nullable=False, default=RoleEnum.USER)

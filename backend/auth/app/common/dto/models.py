@@ -9,5 +9,5 @@ class Token(BaseModel):
 
 # Contents of JWT token
 class TokenPayload(BaseModel):
-    user_id: int | None = None
-    expires: int
+    id: int | None = None
+    exp: int

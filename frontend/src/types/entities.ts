@@ -8,10 +8,15 @@ export type BaseEntity = {
   createdAt: string;
 };
 
+export type AvatarType = {
+  public_id: string
+  url: string
+}
+
 
 export type UserType = BaseEntity & {
     email: string
     name: string
     role: RoleEnum
-    avatar?: string
+    avatar?: AvatarType
 }

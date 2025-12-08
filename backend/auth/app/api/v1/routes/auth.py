@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Request
+from fastapi import APIRouter, HTTPException, status
 from app.common.decorator.responseMessage import response_message
 from app.api.v1.deps import AsyncSessionDep
 from app.common.middleware.response_wrapper import ResponseInterceptorRoute
@@ -7,7 +7,6 @@ from app.crud.crud_user import crud_user
 from app.schemas.user import UserResponse
 from app.utils.hashPass import HashHelper
 from ....schemas.auth import LoginDto, SignUpDto
-from app.core.config import settings
 
 router = APIRouter(route_class=ResponseInterceptorRoute)
 

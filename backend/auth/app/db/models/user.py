@@ -1,5 +1,5 @@
-
 from sqlalchemy import Column, Integer, String, Enum as SqlEnum
+from sqlalchemy.dialects.postgresql import JSONB
 from enum import Enum
 from sqlalchemy.orm import relationship
 
@@ -16,5 +16,5 @@ class User(Base):
     email = Column(String(70), unique=True)
     password = Column(String(255))
     name = Column(String(255))
-    avatar = Column(String(255), nullable=True)
+    avatar = Column(JSONB, nullable=True)
     role = Column(SqlEnum(RoleEnum), nullable=False, default=RoleEnum.USER)

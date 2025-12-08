@@ -1,4 +1,5 @@
-import type { SignInFormType, SignUpFormType } from '@/types/formType'
+
+import type { SignInFormType, SignUpFormType } from '@/types/form/auth.form';
 import { reactive } from 'vue';
 
 const signUpFormValue: SignUpFormType = {

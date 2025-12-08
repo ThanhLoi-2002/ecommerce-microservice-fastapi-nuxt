@@ -30,15 +30,15 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "token"
     REFRESH_TOKEN: str = "refreshToken"
     # exp: 1d, 30m, 5h, 10s
-    ACCESS_TOKEN_EXPIRE: str = '7d'
-    REFRESH_TOKEN_EXPIRE: str = '7d'
+    ACCESS_TOKEN_EXPIRE: str = "7d"
+    REFRESH_TOKEN_EXPIRE: str = "7d"
     ALGORITHM: str = "HS256"
     FRONTEND_HOST: str = "http://localhost:5173"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = []
+    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
+        []
+    )
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -77,5 +77,9 @@ class Settings(BaseSettings):
     EMAILS_FROM_EMAIL: EmailStr | None = None
     EMAILS_FROM_NAME: str | None = None
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+
+    CLOUDINARY_CLOUD_NAME: str = ""
+    CLOUDINARY_API_KEY: str = ""
+    CLOUDINARY_API_SECRET: str = ""
 
 settings = Settings()  # type: ignore

@@ -1,6 +1,7 @@
 import type { IResponse } from "@/types/common";
 import axios from "./axios";
-import type { SignUpFormType, SignInFormType } from "@/types/formType";
+import type { SignUpFormType } from "@/types/form/auth.form";
+import type { SignInFormType } from "@/types/formType";
 
 const signUp = async (data: SignUpFormType) => {
   return axios.post<IResponse>(`/auth/signup`, data);

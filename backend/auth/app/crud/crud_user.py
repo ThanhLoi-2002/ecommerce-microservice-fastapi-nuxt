@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from app.db.models.user import User
 from app.schemas.user import CreateUserDto
 from app.utils.hashPass import HashHelper
@@ -26,6 +26,30 @@ class CRUDUser:
         await db.commit()
         await db.refresh(user)
         return user
+
+    @staticmethod
+    async def update(db, user: User, data: dict):
+        for field, value in data.items():
+            if hasattr(User, field):
+                setattr(user, field, value)
+
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        return user
+
+    async def update_by_id(db, user_id: int, data: dict):
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(**data)
+            .returning(User)
+        )
+
+        result = await db.execute(stmt)
+        await db.commit()
+
+        return result.fetchone()
 
 
 crud_user = CRUDUser()

@@ -1,10 +1,11 @@
 import { authApi } from "@/api/auth.api";
 import { useToast } from "@/composables/useToast";
-import type { SignInFormType, SignUpFormType } from "@/types/formType";
 import { setRefreshToken, setToken } from "@/utils/token";
 import { defineStore } from "pinia";
 import { useUserStore } from "./user.store";
 import router from '@/router';
+import type { SignUpFormType } from "@/types/form/auth.form";
+import type { SignInFormType } from "@/types/formType";
 
 const toast = useToast();
 const userStore = useUserStore();

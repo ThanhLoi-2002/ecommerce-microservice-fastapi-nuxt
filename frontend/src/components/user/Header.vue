@@ -23,8 +23,8 @@
                     <div class="dropdown" v-if="isAuth">
                         <a class="d-flex align-items-center dropdown-toggle" href="#" role="button" id="avatarDropdown"
                             data-toggle="dropdown">
-                            <img :src="user?.avatar || 'https://i.pravatar.cc/150?img=12'" alt="avatar"
-                                class="rounded-circle" style="width: 38px; height: 38px; object-fit: cover;" />
+                            <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar"
+                                class="rounded-circle border" style="width: 38px; height: 38px; object-fit: cover;" />
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="avatarDropdown">
@@ -38,7 +38,7 @@
 
                     <!-- Nếu chưa login -->
                     <div v-else>
-                        <button class="btn btn-outline-dark mr-2" @click="$router.push('/signin')">
+                        <button class="btn btn-outline-dark mr-2" @click="$router.push('/signin')" :disabled="isLoading">
                             Login
                         </button>
                     </div>
@@ -50,9 +50,10 @@
 
 <script setup lang="ts">
 import { useUserStore } from "@/stores/user.store";
+import { DEFAULT_AVATAR } from "@/utils/constants";
 import { storeToRefs } from "pinia";
 
 // Lấy state từ composable
 const userStore = useUserStore();
-const { user, isAuth } = storeToRefs(userStore)
+const { user, isAuth, isLoading } = storeToRefs(userStore)
 </script>

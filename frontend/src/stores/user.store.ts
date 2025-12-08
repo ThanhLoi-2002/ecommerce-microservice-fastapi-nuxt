@@ -1,9 +1,12 @@
 import { userApi } from '@/api/user.api';
-import { type UserType } from './../types/entities';
+import { type AvatarType, type UserType } from './../types/entities';
 import { defineStore } from "pinia";
 import { useToast } from '@/composables/useToast';
 import { removeToken } from '@/utils/token';
 import router from '@/router';
+import type { UserProfileFormType } from '@/types/form/user.form';
+
+const toast = useToast()
 
 export const useUserStore = defineStore("user", {
     state: () => ({
@@ -13,8 +16,11 @@ export const useUserStore = defineStore("user", {
     }),
 
     actions: {
+        updateUser(user: UserType) {
+            this.user = user
+        },
+
         async getMeHandler() {
-            const toast = useToast()
             this.isLoading = true
 
             try {
@@ -23,8 +29,25 @@ export const useUserStore = defineStore("user", {
                 this.isAuth = true
             }
             catch (error: any) {
-                toast.error(error.response?.data?.message || "Lỗi tải thông tin người dùng")
+                toast.error(error.message)
                 this.isAuth = false
+            }
+            finally {
+                this.isLoading = false
+            }
+        },
+
+        async updateProfile(userProfile: UserProfileFormType, callback: () => void) {
+            this.isLoading = true
+
+            try {
+                const { data, message }: any = await userApi.updateProfile(userProfile)
+                this.user = data
+                toast.success(message)
+                callback()
+            }
+            catch (error: any) {
+                toast.error(error.message)
             }
             finally {
                 this.isLoading = false

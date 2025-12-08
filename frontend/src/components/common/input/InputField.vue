@@ -14,6 +14,11 @@
       :required="required"
       :name="name"
       :placeholder="placeholder"
+
+      :min="min"
+      :max="max"
+      :minlength="minlength"
+      :maxlength="maxlength"
     />
   </div>
 </template>
@@ -24,8 +29,13 @@ const props = defineProps<{
   name?: string;
   type?: string;
   required?: boolean;
-  modelValue: string;        // bắt buộc có để v-model hoạt động
+  modelValue: string;
   placeholder?: string;
+
+  min?: number | string;
+  max?: number | string;
+  minlength?: number;
+  maxlength?: number;
 }>();
 
 const emit = defineEmits<{

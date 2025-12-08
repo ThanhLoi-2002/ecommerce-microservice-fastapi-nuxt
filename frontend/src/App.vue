@@ -15,15 +15,17 @@ import DefaultLayout from "./layouts/default.vue";
 import ToastContainer from "./components/common/toast/ToastContainer.vue";
 import { getToken } from "./utils/token";
 import { useUserStore } from "./stores/user.store";
+import { storeToRefs } from "pinia";
 
 const userStore = useUserStore()
+const { isAuth } = storeToRefs(userStore)
 
 const route = useRoute();
 const token = getToken();
 
 // 👉 Nếu có token thì load user info
 onMounted(async () => {
-  if (token) {
+  if (token && !isAuth.value) {
     await userStore.getMeHandler();
   }
 });

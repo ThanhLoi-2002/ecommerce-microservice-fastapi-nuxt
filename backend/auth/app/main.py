@@ -5,12 +5,11 @@ from fastapi.responses import JSONResponse
 from app.core.logging_config import setup_logging
 from app.core.config import settings
 from starlette.middleware.cors import CORSMiddleware
-import sentry_sdk
 from app.api.v1.api import api_router
-from app.db.base import Base
-from app.db.session import create_tables, engine
+from app.db.session import create_tables
 from app.utils.logging_middleware import LoggingMiddleware
 from loguru import logger
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Base.metadata.create_all(bind=engine)
 
@@ -24,9 +23,6 @@ async def startup_event():
     await create_tables()
 
 
-# if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
-#     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
-
 # Set all CORS enabled origins
 if settings.all_cors_origins:
     app.add_middleware(
@@ -37,7 +33,7 @@ if settings.all_cors_origins:
         allow_headers=["*"],
     )
 
-app.add_middleware(LoggingMiddleware)
+# app.add_middleware(LoggingMiddleware)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
@@ -52,6 +48,17 @@ async def http_exception_handler(request: Request, exc: HTTPException):
             # "success": False,
             "message": exc.detail,
         },
+    )
+
+
+# Handle Starlette 401/403/404 from security dependencies
+@app.exception_handler(StarletteHTTPException)
+async def starlette_http_exception_handler(
+    request: Request, exc: StarletteHTTPException
+):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail},
     )
 
 

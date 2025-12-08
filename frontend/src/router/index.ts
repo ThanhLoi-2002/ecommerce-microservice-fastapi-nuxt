@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    component: () => import('../pages/index.vue'),
+    component: () => import('../pages/e-commerce/Home/Home.vue'),
     meta: { layout: "default" }
   },
   {
@@ -15,6 +15,12 @@ const routes = [
     path: '/signup',
     component: () => import('../pages/auth/signup.vue'),
     meta: { layout: "auth" }
+  },
+
+  {
+    path: '/profile',
+    component: () => import('../pages/e-commerce/Profile/Profile.vue'),
+    meta: { layout: "default" }
   },
   {
     path: '/admin/dashboard',

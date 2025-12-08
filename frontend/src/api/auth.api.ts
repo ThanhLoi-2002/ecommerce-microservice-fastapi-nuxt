@@ -7,7 +7,7 @@ const signUp = async (data: SignUpFormType) => {
 };
 
 const signIn = async (data: SignInFormType) => {
-  return axios.post<IResponse<string>>("/auth/login", data);
+  return axios.post<IResponse<string>>("/auth/signin", data);
 };
 
 export const authApi = {

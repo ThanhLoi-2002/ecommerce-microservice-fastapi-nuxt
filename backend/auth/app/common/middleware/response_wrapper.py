@@ -14,7 +14,7 @@ class ResponseInterceptorRoute(APIRoute):
             raw = response.body
             try:
                 data = json.loads(raw)
-            except Exception as e:
+            except:
                 data = raw.decode()
 
             # ----- Get message from decorator (NestJS Reflector equivalent)
@@ -31,7 +31,6 @@ class ResponseInterceptorRoute(APIRoute):
         # Nếu microservice đã trả về đúng cấu trúc → không wrap lại
         if (
             isinstance(data, dict)
-            # and "status" in data
             and "message" in data
             and "data" in data
         ):
@@ -39,7 +38,6 @@ class ResponseInterceptorRoute(APIRoute):
 
         # Ngược lại → wrap
         return {
-            # "status": True,
             "message": message,
             "data": data,
         }

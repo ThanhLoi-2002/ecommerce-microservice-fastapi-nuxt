@@ -1,7 +1,12 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "preserve",
+    "strict": true,
+    "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

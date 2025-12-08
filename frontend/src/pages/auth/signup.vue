@@ -10,7 +10,7 @@
 
         <InputField label="Password" name="password" v-model="signUpForm.password" type="password" required />
 
-        <button class="btn btn-primary w-100" type="submit">Sign Up</button>
+        <button class="btn btn-primary w-100" type="submit" :disabled="isLoading">{{ isLoading ? 'Loading' : 'Sign Up'}}</button>
 
         <div class="text-center mt-3">
           <small>
@@ -24,13 +24,17 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from "@/stores/auth.store";
 import InputField from "../../components/common/input/InputField.vue";
 import { useAuth } from "../../composables/useAuth";
+import { storeToRefs } from "pinia";
 
-const { signUpHandler, signUpForm } = useAuth()
+const { signUpForm } = useAuth()
+const authStore = useAuthStore()
+const { isLoading } = storeToRefs(authStore)
 
 
 const onSubmit = () => {
-  signUpHandler(signUpForm)
+  authStore.signUpHandler(signUpForm)
 };
 </script>

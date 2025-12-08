@@ -3,3 +3,6 @@
     <h1>Welcome page</h1>
   </div>
 </template>
+<script setup lang="ts">
+  
+</script>

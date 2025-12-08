@@ -1,5 +1,5 @@
 export interface IResponse<T = any> {
-  status: boolean;
+  // status: boolean;
   message: string;
   data?: T;
 }

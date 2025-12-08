@@ -1,64 +1,28 @@
-// import { store } from "@/redux";
-// import { authActions } from "@/redux/slice/authSlice";
-// import { userActions } from "@/redux/slice/userSlice";
-// import {
-//   getRefreshToken,
-//   getToken,
-//   isTokenExpired,
-//   setToken,
-// } from "@/utils/token";
+import {
+    getRefreshToken,
+    getToken,
+    setToken,
+    removeToken
+} from "@/utils/token";
 import axiosClient from "axios";
 import axios from "axios";
-import type { IResponse } from "../types/common";
 
 const instance = axiosClient.create({
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: import.meta.env.VITE_API_URL + '/api/v1',
     withCredentials: false,
 });
+
+// --- FLAG tránh lặp vô hạn ---
+let isRefreshing = false;
+let queue: any[] = []; // để đợi refresh xong retry
 
 // Add a request interceptor
 instance.interceptors.request.use(
     async function (config: any) {
-        // let accessToken = "" //getToken();
-        // let refresh_token = getRefreshToken();
-        // Do something before request is sent
-        // if (accessToken && isTokenExpired(accessToken)) {
-        //   try {
-        //     const axiosClient = axios.create({
-        //       baseURL: import.meta.env.VITE_API_URL,
-        //       withCredentials: false,
-        //     });
-        //     const response = await axiosClient.get<IResponse>(
-        //       "/auth/refresh-token",
-        //       {
-        //         headers: {
-        //           Refresh_token: refresh_token,
-        //         },
-        //       }
-        //     );
+        let accessToken = getToken();
 
-        //     if (response.data.status) {
-        //       accessToken = response.data?.data.access_token;
-        //       setToken(accessToken!);
-        //     } else {
-        //       store.dispatch(authActions.logout());
-        //       store.dispatch(userActions.logout());
-        //     }
-        //   } catch (error) {
-        //     return Promise.reject(error);
-        //   }
-        // }
-
-        // config.headers.Authorization = "Bearer " + accessToken;
-
-        // if (!config.headers.Accept && config.headers["Content-Type"]) {
-        //   config.headers.Accept = "application/json";
-        //   config.headers["Content-Type"] = "application/json; charset=utf-8";
-        // }
-
-        const token = localStorage.getItem("token")
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
+        if (accessToken) {
+            config.headers["Authorization"] = accessToken
         }
 
         return config;
@@ -76,9 +40,53 @@ instance.interceptors.response.use(
         // Do something with response data
         return response.data;
     },
-    function (error) {
+    async function (error) {
         // Any status codes that falls outside the range of 2xx cause this function to trigger
         // Do something with response error
+        const originalRequest = error.config;
+        if (error.status == 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            // ------- Nếu đang refresh, đợi -------
+            if (isRefreshing) {
+                return new Promise((resolve) => {
+                    queue.push((token: string) => {
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(instance(originalRequest));
+                    });
+                });
+            }
+            isRefreshing = true;
+
+            let refresh_token = getRefreshToken();
+
+            try {
+                const res = await axios.post(import.meta.env.VITE_API_URL + '/api/v1/auth/refresh-token', {
+                    refreshToken: refresh_token,
+                });
+
+                const newToken = res.data.data.token;
+                setToken(newToken);
+
+                // Update Authorization cho request đầu
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+                // Xử lý các request đang chờ
+                queue.forEach((cb) => cb(newToken));
+                queue = [];
+                isRefreshing = false;
+
+                return instance(originalRequest);
+
+            } catch (err) {
+                isRefreshing = false;
+                queue = [];
+                removeToken()
+                window.location.href = '/'
+                return Promise.reject(err);
+            }
+        }
+
         if (error?.response?.data) {
             return Promise.reject(error.response.data);
         }

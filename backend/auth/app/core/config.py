@@ -27,9 +27,11 @@ class Settings(BaseSettings):
         extra="ignore",
     )
     API_V1_STR: str = "/api/v1"
-    SECRET_KEY: str = secrets.token_urlsafe(32)
+    SECRET_KEY: str = "token"
+    REFRESH_TOKEN: str = "refreshToken"
     # exp: 1d, 30m, 5h, 10s
     ACCESS_TOKEN_EXPIRE: str = '7d'
+    REFRESH_TOKEN_EXPIRE: str = '7d'
     ALGORITHM: str = "HS256"
     FRONTEND_HOST: str = "http://localhost:5173"
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"

@@ -1,7 +1,8 @@
 <template>
   <button :class="class" :type="type" :disabled="isLoading">
-    <span v-if="isLoading">
-      <LoadingSpinner />
+    <span v-if="isLoading" class="d-flex align-items-center justify-content-center">
+      <span class="mr-2"><LoadingSpinner /></span>
+      {{ loadingLabel || "Loading ...." }}
     </span>
     <span v-else>
       {{ label }}
@@ -15,8 +16,9 @@ import LoadingSpinner from '../loading/LoadingSpinner.vue';
 // Định nghĩa các props cho button
 const props = defineProps<{
   label: string;       // Văn bản hiển thị trên button
-  type?: "button" | "submit" | "reset" | undefined ;      // Loại button, mặc định là "button"
-  isLoading: boolean;  // Trạng thái loading
+  loadingLabel?: string;
+  type?: "button" | "submit" | "reset" | undefined;      // Loại button, mặc định là "button"
+  isLoading?: boolean;  // Trạng thái loading
   class?: string;     // Class tùy chỉnh
 }>();
 </script>

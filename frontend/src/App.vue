@@ -12,24 +12,10 @@ import { useRoute } from "vue-router";
 import AuthLayout from "./layouts/auth.vue";
 import AdminLayout from "./layouts/admin.vue";
 import DefaultLayout from "./layouts/default.vue";
+import NoLayout from "./layouts/noLayout.vue";
 import ToastContainer from "./components/common/toast/ToastContainer.vue";
-import { getToken } from "./utils/token";
-import { useUserStore } from "./stores/user.store";
-import { storeToRefs } from "pinia";
-
-const userStore = useUserStore()
-const { isAuth } = storeToRefs(userStore)
 
 const route = useRoute();
-const token = getToken();
-
-// 👉 Nếu có token thì load user info
-onMounted(async () => {
-  if (token && !isAuth.value) {
-    await userStore.getMeHandler();
-  }
-});
-
 
 const layout = computed(() => {
   const name = route.meta.layout
@@ -40,8 +26,11 @@ const layout = computed(() => {
     case "admin":
       return AdminLayout
 
-    default:
+    case "default":
       return DefaultLayout
+
+    default:
+      return NoLayout
   }
 })
 </script>

@@ -38,7 +38,7 @@
 
                     <!-- Nếu chưa login -->
                     <div v-else>
-                        <button class="btn btn-outline-dark mr-2" @click="$router.push('/signin')" :disabled="isLoading">
+                        <button class="btn btn-outline-dark mr-2" @click="$router.push('/auth/signin')" :disabled="isLoading">
                             Login
                         </button>
                     </div>

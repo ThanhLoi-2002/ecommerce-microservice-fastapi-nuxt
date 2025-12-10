@@ -10,13 +10,12 @@
         <InputField label="Password" name="password" type="password" v-model="signInForm.password" required
           placeholder="Enter password" />
 
-        <button class="btn btn-primary w-100" type="submit" :disabled="isLoading">{{ isLoading ? 'Loading' :
-          'SignUp'}}</button>
+        <BaseButton label="Sign In" :isLoading="isLoading" class="btn btn-primary w-100" />
 
         <div class="text-center mt-3">
           <small>
             Already an account?
-            <router-link to="/signup">Sign up</router-link>
+            <router-link to="/auth/signup">Sign up</router-link>
           </small>
         </div>
       </form>
@@ -29,6 +28,7 @@ import { useAuth } from "@/composables/useAuth";
 import InputField from "../../components/common/input/InputField.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
+import BaseButton from "@/components/common/button/BaseButton.vue";
 
 const { signInForm } = useAuth()
 const authStore = useAuthStore()

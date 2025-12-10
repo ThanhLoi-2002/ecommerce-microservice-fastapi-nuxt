@@ -4,8 +4,7 @@ import { setRefreshToken, setToken } from "@/utils/token";
 import { defineStore } from "pinia";
 import { useUserStore } from "./user.store";
 import router from '@/router';
-import type { SignUpFormType } from "@/types/form/auth.form";
-import type { SignInFormType } from "@/types/formType";
+import type { SignInFormType, SignUpFormType } from "@/types/form/auth.form";
 
 const toast = useToast();
 const userStore = useUserStore();
@@ -36,7 +35,7 @@ export const useAuthStore = defineStore("auth", {
       try {
         const { message }: any = await authApi.signUp(form);
         toast.success(message)
-        router.push('/signin')
+        router.push('/auth/signin')
       } catch (e: any) {
         toast.error(e.message)
       } finally {

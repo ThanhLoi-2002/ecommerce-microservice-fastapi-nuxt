@@ -31,9 +31,9 @@
 import ProductCard from "../../../components/user/product/ProductCard.vue";
 
 const products = [
-  { name: "Hoodie Black", price: 320000, image: "/img/hoodie1.jpg" },
-  { name: "T-shirt Oversize", price: 190000, image: "/img/shirt1.jpg" },
-  { name: "Jeans Slimfit", price: 450000, image: "/img/jeans1.jpg" },
-  { name: "Street Jacket", price: 599000, image: "/img/jacket1.jpg" },
+  { name: "Hoodie Black", price: 320000, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAPnWpPy1giBToNFv9rak78IZfSmzGyxHvqw&s" },
+  { name: "T-shirt Oversize", price: 190000, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAPnWpPy1giBToNFv9rak78IZfSmzGyxHvqw&s" },
+  { name: "Jeans Slimfit", price: 450000, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAPnWpPy1giBToNFv9rak78IZfSmzGyxHvqw&s" },
+  { name: "Street Jacket", price: 599000, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAPnWpPy1giBToNFv9rak78IZfSmzGyxHvqw&s" },
 ];
 </script>

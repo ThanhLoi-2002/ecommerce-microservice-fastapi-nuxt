@@ -1,9 +1,50 @@
-
 html {
   scroll-behavior: smooth;
 }
 
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
 }
 
+.icon-xs {
+  width: 12px;
+  height: 12px;
+}
+
+.icon-sm {
+  width: 16px;
+  height: 16px;
+}
+
+.icon-md {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-lg {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-xl {
+  width: 32px;
+  height: 32px;
+}
+
+.icon {
+  color: currentColor;
+  stroke-width: 1.7;
+}
+
+.icon-btn {
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background-color: #f1f1f1;
+}

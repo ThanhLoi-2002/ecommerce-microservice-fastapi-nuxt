@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
 from app.db.models.user import RoleEnum
+from app.schemas.type import Image
 
 
 class CreateUserDto(BaseModel):
@@ -14,16 +15,11 @@ class UpdateUserDto(BaseModel):
     email: EmailStr
 
 
-class Avatar(BaseModel):
-    url: str
-    public_id: str
-
-
 class UserResponse(BaseModel):
     id: int
     name: str
     email: str
-    avatar: Avatar | None = None
+    avatar: Image | None = None
     role: RoleEnum
 
     class Config:

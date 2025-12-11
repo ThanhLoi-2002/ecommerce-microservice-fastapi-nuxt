@@ -4,15 +4,15 @@ import type { UserProfileFormType } from "@/types/form/user.form";
 import type { AvatarType } from "@/types/entities";
 
 const getMe = async () => {
-  return axios.get<IResponse>(`/user/me`,);
+  return axios.get<IResponse>(`/users/me`,);
 };
 
 const updateProfile = async (data: UserProfileFormType) => {
-  return axios.put<IResponse>(`/user`, data);
+  return axios.put<IResponse>(`/users`, data);
 };
 
 const updateAvatar = async (avatar: AvatarType) => {
-  return axios.put<IResponse>(`/user/update-avatar`, { ...avatar });
+  return axios.put<IResponse>(`/users/update-avatar`, { ...avatar });
 };
 
 export const userApi = {

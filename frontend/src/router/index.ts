@@ -51,8 +51,8 @@ const routes = [
     meta: { layout: "admin", requiresAuth: true, role: RoleEnum.ADMIN },
     children: [
       {
-        path: "",
-        name: "dashboard",
+        path: "statistics",
+        name: "statistics",
         component: () => import('../pages/admin/Dashboard.vue')
       },
       {
@@ -117,7 +117,7 @@ router.beforeEach(async (to) => {
     const requiredRole = to.meta.role;
 
     if (user.value?.role == RoleEnum.ADMIN && requiredRole == RoleEnum.USER) {
-      return { name: "dashboard" }
+      return { name: "statistics" }
     }
   }
 

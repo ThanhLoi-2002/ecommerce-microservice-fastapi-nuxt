@@ -29,7 +29,7 @@ const props = defineProps<{
 }>();
 
 const menu = [
-    { label: "Dashboard", to: "/dashboard", icon: 'pi-th-large' },
+    { label: "Dashboard", to: "/dashboard/statistics", icon: 'pi-th-large' },
     { label: "Category", to: "/dashboard/categories", icon: 'pi-tag' },
     { label: "Products", to: "/dashboard/products", icon: 'pi-tags' },
     { label: "Orders", to: "/dashboard/orders", icon: 'pi-box' },
@@ -58,7 +58,7 @@ function moveActive(index: number) {
 
 function checkActive() {
     nextTick(() => {
-        const i = menu.findIndex(x => route.path == x.to);
+        const i = menu.findIndex(x => route.path.startsWith(x.to));
         if (i !== -1) moveActive(i);
     });
 }
@@ -135,6 +135,7 @@ watch(() => props.collapsed, () => checkActive());
 
 .nav-link:hover {
     background: rgba(255, 255, 255, 0.6);
+    width: 162px;
     /* Lighter background on hover */
 }
 </style>

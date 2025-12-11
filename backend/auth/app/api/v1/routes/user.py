@@ -2,7 +2,8 @@ from fastapi import APIRouter
 from app.common.decorator.responseMessage import response_message
 from app.common.middleware.response_wrapper import ResponseInterceptorRoute
 from app.api.v1.deps import AsyncSessionDep, CurrentUser
-from app.schemas.user import Avatar, UpdateUserDto, UserResponse
+from app.schemas.type import Image
+from app.schemas.user import UpdateUserDto, UserResponse
 from app.crud.crud_user import crud_user
 
 router = APIRouter(route_class=ResponseInterceptorRoute)
@@ -22,7 +23,7 @@ async def updateProfile(user: CurrentUser, data: UpdateUserDto, db: AsyncSession
 
 @router.put("/update-avatar", response_model=UserResponse)
 @response_message("Updated avatar")
-async def updateAvatar(user: CurrentUser, avatar: Avatar, db: AsyncSessionDep):
+async def updateAvatar(user: CurrentUser, avatar: Image, db: AsyncSessionDep):
     newData = await crud_user.update(
         db, user, {"avatar": avatar.__dict__}
     )

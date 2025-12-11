@@ -9,8 +9,8 @@
 
         <ul class="nav flex-column">
             <li v-for="(item, i) in menu" :key="item.to" :ref="el => setMenuRef(el, i)" class="nav-item">
-                 <router-link class="nav-link d-flex align-items-center" :to="item.to" @click="moveActive(i)">
-                    <component :is="item.icon" class="icon" />
+                <router-link class="nav-link d-flex align-items-center" :to="item.to" @click="moveActive(i)">
+                    <i :class="`pi ${item.icon}`" style="font-size: 1rem"></i>
                     <span v-if="!collapsed" class="nav-label">{{ item.label }}</span>
                 </router-link>
             </li>
@@ -20,10 +20,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import { HomeIcon, ShoppingBagIcon, UserGroupIcon } from "@heroicons/vue/24/outline";
-import { TagIcon } from "@heroicons/vue/24/solid";
 
 // Define props
 const props = defineProps<{
@@ -31,17 +29,18 @@ const props = defineProps<{
 }>();
 
 const menu = [
-    { label: "Dashboard", to: "/dashboard", icon: HomeIcon },
-    { label: "Products", to: "/dashboard/products", icon: TagIcon },
-    { label: "Orders", to: "/dashboard/orders", icon: ShoppingBagIcon },
-    { label: "Customers", to: "/dashboard/customers", icon: UserGroupIcon },
+    { label: "Dashboard", to: "/dashboard", icon: 'pi-th-large' },
+    { label: "Category", to: "/dashboard/categories", icon: 'pi-tag' },
+    { label: "Products", to: "/dashboard/products", icon: 'pi-tags' },
+    { label: "Orders", to: "/dashboard/orders", icon: 'pi-box' },
+    { label: "Customers", to: "/dashboard/customers", icon: 'pi-user' },
 ];
 
 // refs
 const route = useRoute();
 const menuRefs = ref<HTMLElement[]>([]);
 const activeTop = ref(0);
-const activeWidth = ref("100%");
+const activeWidth = ref("162px");
 
 // stable ref setter
 function setMenuRef(el: any, index: number) {
@@ -53,18 +52,22 @@ function moveActive(index: number) {
     const el = menuRefs.value[index];
     if (el) {
         activeTop.value = el.offsetTop;
-        activeWidth.value = `${el.clientWidth}px`; // Match width of active item
+        // activeWidth.value = `${el.clientWidth}px`; // Match width of active item
     }
 }
 
-// set active on load
-onMounted(() => {
+function checkActive() {
     nextTick(() => {
-        const i = menu.findIndex(x => route.path.startsWith(x.to));
+        const i = menu.findIndex(x => route.path == x.to);
         if (i !== -1) moveActive(i);
-        console.log('a')
     });
-});
+}
+
+// set active on load
+onMounted(() => checkActive());
+
+// watch collapsed state to update active highlight
+watch(() => props.collapsed, () => checkActive());
 </script>
 
 <style scoped>
@@ -133,12 +136,5 @@ onMounted(() => {
 .nav-link:hover {
     background: rgba(255, 255, 255, 0.6);
     /* Lighter background on hover */
-}
-
-/* Icon */
-.icon {
-    width: 20px;
-    height: 20px;
-    color: #c0395c;
 }
 </style>

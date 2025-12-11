@@ -28,6 +28,7 @@ const routes = [
   // -------------------- USER ROUTES --------------------
   {
     path: "",
+    component: () => import('../pages/index.vue'),
     meta: { role: RoleEnum.USER, layout: 'default' },
     children: [
       {
@@ -57,7 +58,12 @@ const routes = [
       {
         path: "products",
         name: "products",
-        component: () => import('../pages/admin/Dashboard.vue')
+        component: () => import('../pages/admin/Product/ProductList.vue')
+      },
+      {
+        path: "categories",
+        name: "categories",
+        component: () => import('../pages/admin/Category/CategoryList.vue')
       },
       {
         path: "orders",

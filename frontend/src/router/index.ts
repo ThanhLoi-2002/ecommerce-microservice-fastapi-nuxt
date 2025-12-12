@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth.store';
 import { useUserStore } from '@/stores/user.store';
 import { RoleEnum } from '@/types/entities';
 import { getToken } from '@/utils/token';
@@ -28,7 +29,6 @@ const routes = [
   // -------------------- USER ROUTES --------------------
   {
     path: "",
-    component: () => import('../pages/index.vue'),
     meta: { role: RoleEnum.USER, layout: 'default' },
     children: [
       {
@@ -66,6 +66,11 @@ const routes = [
         component: () => import('../pages/admin/Category/CategoryList.vue')
       },
       {
+        path: "category",
+        name: "category",
+        component: () => import('../pages/admin/Category/Categories.vue')
+      },
+      {
         path: "orders",
         name: "orders",
         component: () => import('../pages/admin/Dashboard.vue')
@@ -93,14 +98,10 @@ const router = createRouter({
 
 // -------------------- GLOBAL GUARD --------------------
 router.beforeEach(async (to) => {
-  const userStore = useUserStore();
-  const { isAuth, user } = storeToRefs(userStore);
-  const token = getToken();
-
-  // 👉 Nếu có token và chưa login thì load user info
-  if (token && !isAuth.value) {
-    await userStore.getMeHandler();
-  }
+  const authStore = useAuthStore();
+  const { isAuth } = storeToRefs(authStore);
+  const userStore = useUserStore()
+  const { user } = storeToRefs(userStore)
 
   // 1. Guest only (signin/signup)
   if (to.meta.guestOnly && isAuth.value) {

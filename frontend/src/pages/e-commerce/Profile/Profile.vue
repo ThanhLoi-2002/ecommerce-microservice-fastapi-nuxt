@@ -49,7 +49,7 @@
 
             <hr />
 
-            <BaseButton label="Save" :isLoading="isLoading" class="btn btn-dark mr-2" />
+            <BaseButton label="Save" :isLoading="!isLoading" class="btn btn-dark mr-2" />
             <button class="btn btn-outline-secondary" @click="cancelEdit" type="button">
               Cancel
             </button>
@@ -62,21 +62,18 @@
 </template>
 
 <script setup lang="ts">
-import mediaApi from "@/api/media.api";
-import { userApi } from "@/api/user.api";
 import InputField from "@/components/common/input/InputField.vue";
 import { useForm } from "@/composables/useForm";
 import { useToast } from "@/composables/useToast";
 import { useUpload } from "@/composables/useUpload";
 import { useUser } from "@/composables/useUser";
 import { useUserStore } from "@/stores/user.store";
-import type { AvatarType } from "@/types/entities";
 import { DEFAULT_AVATAR } from "@/utils/constants";
 import { storeToRefs } from "pinia";
 import { ref, watch } from "vue";
 import BaseButton from "@/components/common/button/BaseButton.vue";
 
-const { userProfileForm } = useUser()
+const { userProfileForm, updateProfile, updateAvatar } = useUser()
 const { syncForm } = useForm()
 const userStore = useUserStore()
 const { user, isLoading } = storeToRefs(userStore)
@@ -103,35 +100,19 @@ const cancelEdit = () => {
   editing.value = false;
 };
 
-// Upload avatar → preview
+// Upload avatar
 const onAvatarChange = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0];
   if (!file) return;
 
-  const result: AvatarType | null = await upload(file)
-
-  if (result) {
-    uploadLoading.value = true
-
-    try {
-      const { data, message }: any = await userApi.updateAvatar(result)
-      await mediaApi.deleteFile(user.value?.avatar?.public_id!)
-      userStore.updateUser(data)
-      toast.success(message)
-    }
-    catch (error: any) {
-      toast.error(error.message)
-    }
-    finally {
-      uploadLoading.value = false
-    }
-  }
-
+  uploadLoading.value = true
+  await updateAvatar(file)
+  uploadLoading.value = false
 };
 
 // Lưu profile
 const saveProfile = async () => {
-  await userStore.updateProfile(userProfileForm, () => {
+  await updateProfile(userProfileForm, () => {
     editing.value = false;
   })
 };

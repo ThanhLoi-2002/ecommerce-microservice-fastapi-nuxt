@@ -19,7 +19,7 @@ async def create_category(category: CategoryCreate, db: AsyncSessionDep):
         if not parent:
             raise HTTPException(status_code=404, detail="Parent category not found")
 
-    return await crud_category.create_category(db, category)
+    return await crud_category.create(db, category)
 
 
 @router.get("", response_model=PaginatedResponse[CategoryResponse])

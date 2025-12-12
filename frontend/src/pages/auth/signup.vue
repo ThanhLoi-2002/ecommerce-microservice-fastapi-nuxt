@@ -29,12 +29,11 @@ import { useAuth } from "../../composables/useAuth";
 import { storeToRefs } from "pinia";
 import BaseButton from "@/components/common/button/BaseButton.vue";
 
-const { signUpForm } = useAuth()
+const { signUpForm, signUp } = useAuth()
 const authStore = useAuthStore()
 const { isLoading } = storeToRefs(authStore)
 
-
-const onSubmit = () => {
-  authStore.signUpHandler(signUpForm)
+const onSubmit = async () => {
+  await signUp(signUpForm)
 };
 </script>

@@ -23,18 +23,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useAuth } from "@/composables/useAuth";
 import InputField from "../../components/common/input/InputField.vue";
 import { useAuthStore } from "@/stores/auth.store";
 import { storeToRefs } from "pinia";
 import BaseButton from "@/components/common/button/BaseButton.vue";
 
-const { signInForm } = useAuth()
+const { signInForm, signIn } = useAuth()
 const authStore = useAuthStore()
 const { isLoading } = storeToRefs(authStore)
 
-const onSubmit = () => {
-  authStore.signInHandler(signInForm)
+const onSubmit = async () => {
+  await signIn(signInForm)
 };
 </script>

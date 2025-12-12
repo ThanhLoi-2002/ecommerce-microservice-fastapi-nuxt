@@ -1,7 +1,7 @@
 <template>
   <button :class="class" :type="type" :disabled="isLoading">
     <span v-if="isLoading" class="d-flex align-items-center justify-content-center">
-      <span class="mr-2"><LoadingSpinner /></span>
+      <span class="mr-2 d-flex"><LoadingSpinner /></span>
       {{ loadingLabel || "Loading ...." }}
     </span>
     <span v-else>

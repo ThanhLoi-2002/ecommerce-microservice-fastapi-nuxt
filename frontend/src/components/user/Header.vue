@@ -23,14 +23,14 @@
                     <div class="dropdown" v-if="isAuth">
                         <a class="d-flex align-items-center dropdown-toggle" href="#" role="button" id="avatarDropdown"
                             data-toggle="dropdown">
-                            <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar"
-                                class="rounded-circle border" style="width: 38px; height: 38px; object-fit: cover;" />
+                            <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar" class="rounded-circle border"
+                                style="width: 38px; height: 38px; object-fit: cover;" />
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="avatarDropdown">
                             <router-link class="dropdown-item" to="/profile">Profile</router-link>
 
-                            <router-link class="dropdown-item" to="#" @click="userStore.logout">
+                            <router-link class="dropdown-item" to="#" @click="logout">
                                 Logout
                             </router-link>
                         </div>
@@ -38,7 +38,8 @@
 
                     <!-- Nếu chưa login -->
                     <div v-else>
-                        <button class="btn btn-outline-dark mr-2" @click="$router.push('/auth/signin')" :disabled="isLoading">
+                        <button class="btn btn-outline-dark mr-2" @click="$router.push('/auth/signin')"
+                            :disabled="isLoading">
                             Login
                         </button>
                     </div>
@@ -49,11 +50,16 @@
 </template>
 
 <script setup lang="ts">
+import { useAuth } from "@/composables/useAuth";
+import { useAuthStore } from "@/stores/auth.store";
 import { useUserStore } from "@/stores/user.store";
 import { DEFAULT_AVATAR } from "@/utils/constants";
 import { storeToRefs } from "pinia";
 
-// Lấy state từ composable
+// Lấy state từ store
 const userStore = useUserStore();
-const { user, isAuth, isLoading } = storeToRefs(userStore)
+const { user, isLoading } = storeToRefs(userStore)
+const authStore = useAuthStore()
+const { isAuth } = storeToRefs(authStore)
+const { logout } = useAuth()
 </script>

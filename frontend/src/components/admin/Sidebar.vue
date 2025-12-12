@@ -31,6 +31,7 @@ const props = defineProps<{
 const menu = [
     { label: "Dashboard", to: "/dashboard/statistics", icon: 'pi-th-large' },
     { label: "Category", to: "/dashboard/categories", icon: 'pi-tag' },
+    { label: "Categories", to: "/dashboard/category", icon: 'pi-tag' },
     { label: "Products", to: "/dashboard/products", icon: 'pi-tags' },
     { label: "Orders", to: "/dashboard/orders", icon: 'pi-box' },
     { label: "Customers", to: "/dashboard/customers", icon: 'pi-user' },

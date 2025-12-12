@@ -323,7 +323,7 @@ interface Filters {
 }
 
 // API Base URL
-const API_URL = 'http://localhost:8000/api/categories';
+const API_URL = 'http://localhost:8000/api/v1/categories';
 
 // State
 const categories = ref<Category[]>([]);

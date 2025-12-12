@@ -1,15 +1,13 @@
 from pydantic import BaseModel, Field, validator
 from typing import Optional, List
 from datetime import datetime
-
-from sqlalchemy import Tuple
-
 from app.schemas.type import BaseFilter, Image, PaginationParams
 
 
 class CategoryCreate(BaseModel):
     name: str = Field(..., min_length=1, max_length=255)
     img: Optional[Image] = None
+    description: Optional[str] = None
     pid: Optional[int] = None
     status: bool = True
 
@@ -17,6 +15,7 @@ class CategoryCreate(BaseModel):
 class CategoryUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=255)
     img: Optional[Image] = None
+    description: Optional[str] = None
     pid: Optional[int] = None
     status: Optional[bool] = None
 
@@ -48,6 +47,8 @@ class CategoryResponse(BaseModel):
     slug: str
     name: str
     img: Image
+    pid: Optional[int] = None
+    description: Optional[str] = None
     status: bool
     created_at: datetime
     updated_at: datetime

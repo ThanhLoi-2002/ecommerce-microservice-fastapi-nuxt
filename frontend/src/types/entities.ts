@@ -1,3 +1,5 @@
+import type { ImageType } from "./common";
+
 export enum RoleEnum {
     ADMIN = "ADMIN",
     USER = "USER"
@@ -8,15 +10,9 @@ export type BaseEntity = {
   createdAt: string;
 };
 
-export type AvatarType = {
-  public_id: string
-  url: string
-}
-
-
 export type UserType = BaseEntity & {
     email: string
     name: string
     role: RoleEnum
-    avatar?: AvatarType
+    avatar?: ImageType
 }

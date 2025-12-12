@@ -1,3 +1,4 @@
+import { useUser } from '@/composables/useUser';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUserStore } from '@/stores/user.store';
 import { RoleEnum } from '@/types/entities';
@@ -66,19 +67,14 @@ const routes = [
         component: () => import('../pages/admin/Category/CategoryList.vue')
       },
       {
-        path: "category",
-        name: "category",
-        component: () => import('../pages/admin/Category/Categories.vue')
-      },
-      {
         path: "orders",
         name: "orders",
-        component: () => import('../pages/admin/Dashboard.vue')
+        component: () => import('../pages/admin/Order/OrderList.vue')
       },
       {
         path: "customers",
         name: "customers",
-        component: () => import('../pages/admin/Dashboard.vue')
+        component: () => import('../pages/admin/User/UserList.vue')
       },
     ]
   },
@@ -102,9 +98,16 @@ router.beforeEach(async (to) => {
   const { isAuth } = storeToRefs(authStore);
   const userStore = useUserStore()
   const { user } = storeToRefs(userStore)
+  const token = getToken()
+  const { getMe } = useUser()
+
+  if (token && !isAuth.value) {
+    await getMe();
+  }
 
   // 1. Guest only (signin/signup)
   if (to.meta.guestOnly && isAuth.value) {
+    console.log("kick")
     return { name: "home" };
   }
 

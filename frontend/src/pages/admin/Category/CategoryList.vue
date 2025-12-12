@@ -5,178 +5,288 @@
         <Header label="Categories" />
 
         <div class="container-fluid mt-4">
-            <div class="row">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Danh sách Thể loại Sản phẩm</h5>
+                        <button class="btn btn-primary" @click="showModal('create')">
+                            ➕ Thêm danh mục
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Tìm kiếm và bộ lọc -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" placeholder="🔍 Tìm kiếm danh mục..."
+                                v-model="filters.search" @input="debouncedSearch" />
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-control" v-model="filters.status" @change="loadCategories">
+                                <option :value="null">Tất cả trạng thái</option>
+                                <option :value="true">Đang hoạt động</option>
+                                <option :value="false">Không hoạt động</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-control" v-model="filters.parentOnly" @change="loadCategories">
+                                <option :value="false">Tất cả</option>
+                                <option :value="true">Danh mục cha</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-control" v-model="sortBy">
+                                <option value="">Sắp xếp </option>
+                                <option value="name">Sắp xếp theo tên</option>
+                                <option value="count">Số sản phẩm</option>
+                            </select>
+                        </div>
 
-                <!-- Main Content -->
-                <div class="col-md-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-white">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">Danh sách Thể loại Sản phẩm</h5>
-                                <button class="btn btn-primary" @click="showAddModal">
-                                    ➕ Thêm danh mục
-                                </button>
+                        <div class="col-md-1">
+                            <button class="btn btn-outline-secondary btn-block" @click="resetFilters">
+                                🔄
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Thống kê tổng quan -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="alert alert-primary mb-0">
+                                <h4 class="mb-0">{{ pagination.total }}</h4>
+                                <small>Tổng danh mục</small>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <!-- Tìm kiếm và bộ lọc -->
-                            <div class="row mb-4">
-                                <div class="col-md-5">
-                                    <input type="text" class="form-control" placeholder="🔍 Tìm kiếm danh mục..."
-                                        v-model="searchTerm" />
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-control" v-model="filterStatus">
-                                        <option value="all">Tất cả trạng thái</option>
-                                        <option value="active">Đang hoạt động</option>
-                                        <option value="inactive">Không hoạt động</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <select class="form-control" v-model="sortBy">
-                                        <option value="name">Sắp xếp theo tên</option>
-                                        <option value="count">Số sản phẩm</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-outline-secondary btn-block" @click="resetFilters">
-                                        🔄 Làm mới
-                                    </button>
-                                </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-success mb-0">
+                                <h4 class="mb-0">{{ activeCount }}</h4>
+                                <small>Đang hoạt động</small>
                             </div>
-
-                            <!-- Thống kê tổng quan -->
-                            <div class="row mb-4">
-                                <div class="col-md-4">
-                                    <div class="alert alert-primary mb-0">
-                                        <h4 class="mb-0">{{ filteredCategories.length }}</h4>
-                                        <small>Tổng danh mục</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="alert alert-success mb-0">
-                                        <h4 class="mb-0">{{ totalProducts }}</h4>
-                                        <small>Tổng sản phẩm</small>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="alert alert-info mb-0">
-                                        <h4 class="mb-0">{{ activeCategories }}</h4>
-                                        <small>Đang hoạt động</small>
-                                    </div>
-                                </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-info mb-0">
+                                <h4 class="mb-0">{{ parentCount }}</h4>
+                                <small>Danh mục cha</small>
                             </div>
-
-                            <!-- Nút chuyển đổi view -->
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">{{ viewMode === 'cards' ? 'Chế độ xem thẻ' : 'Chế độ xem bảng' }}</h6>
-                                <button class="btn btn-sm btn-outline-primary" @click="toggleView">
-                                    {{ viewMode === 'cards' ? '📋 Xem dạng bảng' : '📇 Xem dạng thẻ' }}
-                                </button>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="alert alert-warning mb-0">
+                                <h4 class="mb-0">{{ childrenCount }}</h4>
+                                <small>Danh mục con</small>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Danh sách dạng Card -->
-                            <div v-if="viewMode === 'cards'" class="row">
-                                <div v-for="category in sortedCategories" :key="category.id"
-                                    class="col-md-6 col-lg-4 mb-4">
-                                    <div class="card h-100 border shadow-sm category-card">
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                                <div>
-                                                    <h5 class="card-title mb-1">
-                                                        <span style="font-size: 1.5rem; margin-right: 8px;">{{
-                                                            category.icon }}</span>
-                                                        {{ category.name }}
-                                                    </h5>
-                                                </div>
-                                                <span
-                                                    :class="category.status === 'active' ? 'badge badge-success' : 'badge badge-secondary'">
-                                                    {{ category.status === 'active' ? 'Hoạt động' : 'Tắt' }}
-                                                </span>
+                    <!-- Loading -->
+                    <div v-if="loading" class="text-center py-5">
+                        <div class="text-center">
+                            <LoadingSpinner size="40px" />
+                            <p>Loading....</p>
+                        </div>
+                    </div>
+                    <!-- Bảng danh mục -->
+                    <div v-else class="table-responsive">
+                        <!-- Nút chuyển đổi view -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">{{ viewMode === 'cards' ? 'Chế độ xem thẻ' : 'Chế độ xem bảng' }}</h6>
+                            <button class="btn btn-sm btn-outline-primary" @click="toggleView">
+                                {{ viewMode === 'cards' ? '📋 Xem dạng bảng' : '📇 Xem dạng thẻ' }}
+                            </button>
+                        </div>
+
+                        <!-- Danh sách dạng Card -->
+                        <div v-if="viewMode === 'cards'" class="row">
+                            <div v-for="category in categories" :key="category.id" class="col-md-6 col-lg-4 mb-4">
+                                <div class="card h-100 border shadow-sm category-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div>
+                                                <h5 class="card-title mb-1">
+                                                    <img v-if="category.img" :src="category.img.url"
+                                                        :alt="category.name" class="category-img me-2" />
+                                                    {{ category.name }}
+                                                </h5>
                                             </div>
+                                            <span
+                                                :class="category.status === true ? 'badge badge-success' : 'badge badge-secondary'">
+                                                {{ category.status === true ? 'Hoạt động' : 'Tắt' }}
+                                            </span>
+                                        </div>
 
-                                            <p class="card-text text-muted mb-3" style="min-height: 45px;">
-                                                {{ category.description }}
-                                            </p>
+                                        <p class="card-text text-muted mb-3 text-truncate" style="min-height: 25px;">
+                                            {{ category.description }}
+                                        </p>
 
-                                            <div class="mb-3">
-                                                <div class="d-flex justify-content-between mb-1">
-                                                    <small class="text-muted">Số sản phẩm:</small>
-                                                    <strong class="text-primary">{{ category.count }} sản phẩm</strong>
-                                                </div>
-                                                <div class="progress" style="height: 5px;">
-                                                    <div class="progress-bar bg-primary"
-                                                        :style="{ width: getProgressWidth(category.count) + '%' }">
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <span v-if="category.pid" class="badge badge-info">
+                                            {{ getParentName(category.pid) }}
+                                        </span>
+                                        <span v-else class="badge badge-secondary">Danh mục gốc</span>
 
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <small class="text-muted">
-                                                    Cập nhật: {{ category.updated }}
-                                                </small>
-                                                <div>
-                                                    <button class="btn btn-sm btn-outline-info mr-1"
-                                                        title="Xem sản phẩm" @click="viewProducts(category.id)">
-                                                        👁️
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-warning mr-1"
-                                                        title="Chỉnh sửa" @click="editCategory(category.id)">
-                                                        ✏️
-                                                    </button>
-                                                    <button class="btn btn-sm btn-outline-danger" title="Xóa"
-                                                        @click="deleteCategory(category.id)">
-                                                        🗑️
-                                                    </button>
-                                                </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                Cập nhật: {{ formatDate(category.updated_at) }}
+                                            </small>
+                                            <div>
+                                                <button class="btn btn-sm btn-outline-info mr-1" title="Xem sản phẩm"
+                                                    @click="viewProducts(category.id)">
+                                                    👁️
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-warning mr-1" title="Chỉnh sửa"
+                                                    @click="editCategory(category.id)">
+                                                    ✏️
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" title="Xóa"
+                                                    @click="deleteCategory(category.id)">
+                                                    🗑️
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Danh sách dạng Bảng -->
-                            <div v-else class="table-responsive">
-                                <table class="table table-hover table-bordered">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th width="50">#</th>
-                                            <th width="80">Icon</th>
-                                            <th>Tên danh mục</th>
-                                            <th>Mô tả</th>
-                                            <th width="120">Số sản phẩm</th>
-                                            <th width="120">Trạng thái</th>
-                                            <th width="150">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="category in sortedCategories" :key="category.id">
-                                            <td>{{ category.id }}</td>
-                                            <td style="font-size: 1.8rem; text-align: center;">{{ category.icon }}</td>
-                                            <td><strong>{{ category.name }}</strong></td>
-                                            <td><small class="text-muted">{{ category.description }}</small></td>
-                                            <td class="text-center">
-                                                <span class="badge badge-primary badge-pill">{{ category.count }}</span>
-                                            </td>
-                                            <td>
-                                                <span
-                                                    :class="category.status === 'active' ? 'badge badge-success' : 'badge badge-secondary'">
-                                                    {{ category.status === 'active' ? 'Hoạt động' : 'Tắt' }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-sm btn-info mr-1" title="Xem sản phẩm"
-                                                    @click="viewProducts(category.id)">👁️</button>
-                                                <button class="btn btn-sm btn-warning mr-1" title="Chỉnh sửa"
-                                                    @click="editCategory(category.id)">✏️</button>
-                                                <button class="btn btn-sm btn-danger" title="Xóa"
-                                                    @click="deleteCategory(category.id)">🗑️</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <!-- Danh sách dạng Bảng -->
+                        <div v-else class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th width="50">#</th>
+                                        <th width="80">Hình ảnh</th>
+                                        <th>Tên danh mục</th>
+                                        <th>Mô tả</th>
+                                        <th>Danh mục cha</th>
+                                        <th width="120">Trạng thái</th>
+                                        <th width="150">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="category in categories" :key="category.id">
+                                        <td>{{ category.id }}</td>
+                                        <td style="text-align: center;"><img v-if="category.img" :src="category.img.url"
+                                                :alt="category.name" class="category-img me-2" /></td>
+                                        <td><strong>{{ category.name }}</strong></td>
+                                        <td><small class="text-muted">{{ category.description }}</small></td>
+                                        <td>
+                                            <span v-if="category.pid" class="badge badge-info">
+                                                {{ getParentName(category.pid) }}
+                                            </span>
+                                            <span v-else class="badge badge-secondary">Danh mục gốc</span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                :class="category.status === true ? 'badge badge-success' : 'badge badge-secondary'">
+                                                {{ category.status === true ? 'Hoạt động' : 'Tắt' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info mr-1" title="Xem sản phẩm"
+                                                @click="viewProducts(category.id)">👁️</button>
+                                            <button class="btn btn-sm btn-warning mr-1" title="Chỉnh sửa"
+                                                @click="editCategory(category.id)">✏️</button>
+                                            <button class="btn btn-sm btn-danger" title="Xóa"
+                                                @click="deleteCategory(category.id)">🗑️</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Phân trang -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted mr-2">
+                                Hiển thị {{ (pagination.page - 1) * perPage + 1 }} -
+                                {{ Math.min(pagination.page * perPage, pagination.total) }} /
+                                <strong>{{ pagination.total }}</strong> danh mục
+                            </span>
+                            <div class="">
+                                <select class="form-control" v-model="perPage" @change="loadCategories">
+                                    <option :value="10">10</option>
+                                    <option :value="20">20</option>
+                                    <option :value="50">50</option>
+                                </select>
                             </div>
                         </div>
+                        <nav>
+                            <ul class="pagination mb-0">
+                                <li class="page-item" :class="{ disabled: pagination.page === 1 }">
+                                    <a class="page-link" href="#" @click.prevent="changePage(pagination.page - 1)">‹</a>
+                                </li>
+                                <li v-for="page in displayPages" :key="page" class="page-item"
+                                    :class="{ active: page === pagination.page }">
+                                    <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
+                                </li>
+                                <li class="page-item" :class="{ disabled: pagination.page === pagination.totalPages }">
+                                    <a class="page-link" href="#" @click.prevent="changePage(pagination.page + 1)">›</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Create/Edit -->
+        <div v-if="modalVisible" class="modal-backdrop" @click="closeModal">
+            <div class="modal-dialog" @click.stop>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{ modalMode === 'create' ? '➕ Thêm danh mục mới' : '✏️ Chỉnh sửa danh mục' }}
+                        </h5>
+                        <button type="button" class="close" @click="closeModal">
+                            <span>&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form @submit.prevent="submitForm">
+                            <div class="form-group">
+                                <label>Tên danh mục <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" v-model="formData.name" required
+                                    placeholder="Nhập tên danh mục..." />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Hình ảnh (URL)</label>
+                                <input type="url" class="form-control" v-model="formData.img"
+                                    placeholder="https://example.com/image.jpg" />
+                                <img v-if="formData.img" :src="formData.img.url" alt="Preview"
+                                    class="mt-2 img-thumbnail" style="max-height: 100px;" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>Danh mục cha</label>
+                                <select class="form-control" v-model="formData.pid">
+                                    <option :value="null">-- Không có (Danh mục gốc) --</option>
+                                    <option v-for="cat in parentCategories" :key="cat.id" :value="cat.id"
+                                        :disabled="modalMode === 'edit' && cat.id === formData.id">
+                                        {{ cat.name }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="custom-control custom-switch">
+                                    <input type="checkbox" class="custom-control-input" id="statusSwitch"
+                                        v-model="formData.status" />
+                                    <label class="custom-control-label" for="statusSwitch">
+                                        Trạng thái: {{ formData.status ? '✓ Hoạt động' : '✗ Không hoạt động' }}
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" @click="closeModal">
+                                    Hủy
+                                </button>
+                                <button type="submit" class="btn btn-primary" :disabled="submitting">
+                                    {{ submitting ? 'Đang xử lý...' : (modalMode === 'create' ? 'Thêm mới' : 'Cập nhật')
+                                    }}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -185,149 +295,268 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import axios from "../../../api/axios";
 import Header from '@/components/admin/Header.vue';
-import { ref, computed } from 'vue';
+import type { ImageType } from '@/types/common';
+import LoadingSpinner from '@/components/common/loading/LoadingSpinner.vue';
 
-interface Category {
+interface CategoryType {
     id: number;
     name: string;
-    icon: string;
-    count: number;
-    status: 'active' | 'inactive';
-    description: string;
-    updated: string;
+    slug: string;
+    description: string | null
+    img: ImageType;
+    pid: number | null;
+    status: boolean;
+    children_count: number;
+    created_at: string;
+    updated_at: string;
 }
 
-type ViewMode = 'cards' | 'table';
-type SortBy = 'name' | 'count';
+interface Filters {
+    search: string;
+    status: boolean | null;
+    parentOnly: boolean;
+}
+
+// API Base URL
+const API_URL = '/categories';
 
 // State
-const searchTerm = ref<string>('');
-const filterStatus = ref<string>('all');
-const sortBy = ref<SortBy>('name');
-const viewMode = ref<ViewMode>('cards');
+const categories = ref<CategoryType[]>([]);
+const allCategories = ref<CategoryType[]>([]);
+const loading = ref(false);
+const submitting = ref(false);
+const modalVisible = ref(false);
+const modalMode = ref<'create' | 'edit'>('create');
+const sortBy = ref<string>('');
+const viewMode = ref<string>('cards');
 
-const categories = ref<Category[]>([
-    {
-        id: 1,
-        name: 'Áo sơ mi',
-        icon: '👔',
-        count: 45,
-        status: 'active',
-        description: 'Áo sơ mi nam nữ các loại, công sở và dự tiệc',
-        updated: '10/12/2025'
-    },
-    {
-        id: 2,
-        name: 'Quần',
-        icon: '👖',
-        count: 120,
-        status: 'active',
-        description: 'Quần jean, kaki, tây, short các loại',
-        updated: '08/12/2025'
-    },
-    {
-        id: 3,
-        name: 'Váy',
-        icon: '👗',
-        count: 78,
-        status: 'active',
-        description: 'Váy dạ hội, công sở, dự tiệc, váy midi',
-        updated: '09/12/2025'
-    },
-    {
-        id: 4,
-        name: 'Áo thun',
-        icon: '👕',
-        count: 95,
-        status: 'active',
-        description: 'Áo thun, polo, ba lỗ, áo phông',
-        updated: '11/12/2025'
-    },
-    {
-        id: 5,
-        name: 'Áo khoác',
-        icon: '🧥',
-        count: 62,
-        status: 'active',
-        description: 'Áo khoác, blazer, cardigan, jacket',
-        updated: '07/12/2025'
-    },
-    {
-        id: 6,
-        name: 'Phụ kiện',
-        icon: '👜',
-        count: 150,
-        status: 'active',
-        description: 'Túi xách, mũ, thắt lưng, khăn choàng',
-        updated: '10/12/2025'
-    },
-    {
-        id: 7,
-        name: 'Giày dép',
-        icon: '👞',
-        count: 88,
-        status: 'active',
-        description: 'Giày thể thao, giày cao gót, sandal',
-        updated: '09/12/2025'
-    },
-    {
-        id: 8,
-        name: 'Đồ ngủ',
-        icon: '🛌',
-        count: 35,
-        status: 'inactive',
-        description: 'Đồ ngủ, đồ mặc nhà các loại',
-        updated: '05/12/2025'
-    },
-]);
+const filters = ref<Filters>({
+    search: '',
+    status: null,
+    parentOnly: false
+});
+
+const pagination = ref({
+    page: 1,
+    perPage: 10,
+    total: 0,
+    totalPages: 0
+});
+
+const perPage = ref(10);
+
+const formData = ref({
+    id: null as number | null,
+    name: '',
+    img: null as ImageType | null,
+    pid: null as number | null,
+    status: true
+});
 
 // Computed
-const filteredCategories = computed(() => {
-    return categories.value.filter(category => {
-        const matchSearch = category.name.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-            category.description.toLowerCase().includes(searchTerm.value.toLowerCase());
-        const matchStatus = filterStatus.value === 'all' || category.status === filterStatus.value;
-        return matchSearch && matchStatus;
-    });
+const parentCategories = computed(() => {
+    return allCategories.value.filter(cat => cat.pid === null);
 });
 
-const sortedCategories = computed(() => {
-    const sorted = [...filteredCategories.value];
-    if (sortBy.value === 'name') {
-        return sorted.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortBy.value === 'count') {
-        return sorted.sort((a, b) => b.count - a.count);
-    }
-    return sorted;
+const activeCount = computed(() => {
+    return categories.value.filter(cat => cat.status).length;
 });
 
-const totalProducts = computed(() => {
-    return filteredCategories.value.reduce((sum, cat) => sum + cat.count, 0);
+const parentCount = computed(() => {
+    return categories.value.filter(cat => cat.pid === null).length;
 });
 
-const activeCategories = computed(() => {
-    return filteredCategories.value.filter(cat => cat.status === 'active').length;
+const childrenCount = computed(() => {
+    return categories.value.filter(cat => cat.pid !== null).length;
 });
-
-// Methods
-const getProgressWidth = (count: number): number => {
-    const max = Math.max(...categories.value.map(c => c.count));
-    return (count / max) * 100;
-};
-
-const resetFilters = (): void => {
-    searchTerm.value = '';
-    filterStatus.value = 'all';
-    sortBy.value = 'name';
-};
 
 const toggleView = (): void => {
     viewMode.value = viewMode.value === 'cards' ? 'table' : 'cards';
 };
 
-const showAddModal = (): void => {
-    alert('Mở form thêm danh mục mới');
+const displayPages = computed(() => {
+    const pages: number[] = [];
+    const total = pagination.value.totalPages;
+    const current = pagination.value.page;
+
+    if (total <= 7) {
+        for (let i = 1; i <= total; i++) {
+            pages.push(i);
+        }
+    } else {
+        pages.push(1);
+        if (current > 3) pages.push(-1); // ellipsis
+
+        for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+            pages.push(i);
+        }
+
+        if (current < total - 2) pages.push(-1);
+        pages.push(total);
+    }
+
+    return pages;
+});
+
+// Methods
+const loadCategories = async () => {
+    loading.value = true;
+    try {
+        const params: any = {
+            page: pagination.value.page,
+            per_page: perPage.value
+        };
+
+        if (filters.value.search) params.search = filters.value.search;
+        if (filters.value.status !== null) params.status = filters.value.status;
+        if (filters.value.parentOnly) params.parent_only = true;
+
+        const { data } = await axios.get(API_URL, { params });
+
+        categories.value = data.items;
+        pagination.value = {
+            page: data.page,
+            perPage: data.per_page,
+            total: data.total,
+            totalPages: data.total_pages
+        };
+    } catch (error) {
+        console.error('Error loading categories:', error);
+        alert('Lỗi khi tải danh mục!');
+    } finally {
+        loading.value = false;
+    }
+};
+
+const loadAllCategories = async () => {
+    try {
+        const { data } = await axios.get(API_URL, {
+            params: { page: 1, per_page: 1000 }
+        });
+        allCategories.value = data.items;
+    } catch (error) {
+        console.error('Error loading all categories:', error);
+    }
+};
+
+let searchTimeout: any = null;
+const debouncedSearch = () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        pagination.value.page = 1;
+        loadCategories();
+    }, 500);
+};
+
+const changePage = (page: number) => {
+    if (page >= 1 && page <= pagination.value.totalPages) {
+        pagination.value.page = page;
+        loadCategories();
+    }
+};
+
+const resetFilters = () => {
+    filters.value = {
+        search: '',
+        status: null,
+        parentOnly: false
+    };
+    pagination.value.page = 1;
+    loadCategories();
+};
+
+const showModal = (mode: 'create' | 'edit', category?: CategoryType) => {
+    modalMode.value = mode;
+
+    if (mode === 'edit' && category) {
+        formData.value = {
+            id: category.id,
+            name: category.name,
+            img: { ...category.img },
+            pid: category.pid,
+            status: category.status
+        };
+    } else {
+        formData.value = {
+            id: null,
+            name: '',
+            img: null,
+            pid: null,
+            status: true
+        };
+    }
+
+    modalVisible.value = true;
+};
+
+const closeModal = () => {
+    modalVisible.value = false;
+};
+
+const submitForm = async () => {
+    submitting.value = true;
+    try {
+        const payload = {
+            name: formData.value.name,
+            img: formData.value.img || null,
+            pid: formData.value.pid || null,
+            status: formData.value.status
+        };
+
+        if (modalMode.value === 'create') {
+            await axios.post(API_URL, payload);
+            alert('Thêm danh mục thành công!');
+        } else {
+            await axios.put(`${API_URL}/${formData.value.id}`, payload);
+            alert('Cập nhật danh mục thành công!');
+        }
+
+        closeModal();
+        loadCategories();
+        loadAllCategories();
+    } catch (error: any) {
+        console.error('Error submitting form:', error);
+        alert(error.response?.data?.detail || 'Có lỗi xảy ra!');
+    } finally {
+        submitting.value = false;
+    }
+};
+
+const confirmDelete = async (id: number) => {
+    if (!confirm('Bạn có chắc muốn xóa danh mục này?')) return;
+
+    try {
+        await axios.delete(`${API_URL}/${id}`);
+        alert('Xóa danh mục thành công!');
+        loadCategories();
+        loadAllCategories();
+    } catch (error: any) {
+        console.error('Error deleting category:', error);
+        alert(error.response?.data?.detail || 'Có lỗi xảy ra!');
+    }
+};
+
+const viewCategory = (category: CategoryType) => {
+    alert(`Xem chi tiết danh mục:\nID: ${category.id}\nTên: ${category.name}\nSlug: ${category.slug}`);
+};
+
+const getParentName = (pid: number): string => {
+    const parent = allCategories.value.find(cat => cat.id === pid);
+    return parent?.name || 'N/A';
+};
+
+const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN') + ' ' + date.toLocaleTimeString('vi-VN');
+};
+
+// Methods
+const getProgressWidth = (count: number): number => {
+    const max = Math.max(...categories.value.map(c => c.children_count));
+    return (count / max) * 100;
 };
 
 const viewProducts = (id: number): void => {
@@ -346,19 +575,83 @@ const deleteCategory = (id: number): void => {
         }
     }
 };
+
+// Lifecycle
+onMounted(() => {
+    loadCategories();
+    loadAllCategories();
+});
 </script>
 
 <style scoped>
-.category-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.category-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
-}
-
 .table td {
     vertical-align: middle;
+}
+
+.category-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.category-img-placeholder {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f0f0f0;
+    border-radius: 8px;
+    font-size: 1.5rem;
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+}
+
+.modal-dialog {
+    background: white;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 </style>

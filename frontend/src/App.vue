@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 
 import AuthLayout from "./layouts/auth.vue";
@@ -23,22 +23,10 @@ import ToastContainer from "./components/common/toast/ToastContainer.vue";
 import { storeToRefs } from "pinia";
 import LoadingSpinner from "./components/common/loading/LoadingSpinner.vue";
 import { useAuthStore } from "./stores/auth.store";
-import { getToken } from "./utils/token";
-import { useUser } from "./composables/useUser";
 
-const { getMe } = useUser()
 const authStore = useAuthStore()
-const { isAuthLoading, isAuth } = storeToRefs(authStore)
+const { isAuthLoading } = storeToRefs(authStore)
 const route = useRoute();
-
-const token = getToken()
-
-onMounted(async () => {
-  // 👉 Nếu có token và chưa login thì load user info
-  if (token && !isAuth.value) {
-    await getMe();
-  }
-})
 
 
 const layout = computed(() => {

@@ -49,7 +49,7 @@
 
             <hr />
 
-            <BaseButton label="Save" :isLoading="!isLoading" class="btn btn-dark mr-2" />
+            <BaseButton label="Save" :isLoading="isLoading" class="btn btn-dark mr-2" />
             <button class="btn btn-outline-secondary" @click="cancelEdit" type="button">
               Cancel
             </button>

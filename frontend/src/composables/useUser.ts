@@ -5,7 +5,7 @@ import type { UserProfileFormType } from '@/types/form/user.form';
 import { reactive } from 'vue';
 import { useToast } from './useToast';
 import { useAuthStore } from '@/stores/auth.store';
-import type { AvatarType } from '@/types/entities';
+import type { ImageType } from '@/types/entities';
 import { useUpload } from './useUpload';
 import mediaApi from '@/api/media.api';
 import { storeToRefs } from 'pinia';
@@ -59,7 +59,7 @@ export function useUser() {
     }
 
     const updateAvatar = async (file: File) => {
-        const result: AvatarType | null = await upload(file)
+        const result: ImageType | null = await upload(file)
 
         if (result) {
             try {

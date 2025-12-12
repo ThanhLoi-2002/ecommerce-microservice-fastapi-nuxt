@@ -5,7 +5,7 @@
         <h4 class="brand" v-if="!collapsed">Clothify</h4>
 
         <!-- Active highlight -->
-        <div class="active-bg" :style="{ top: activeTop + 'px', width: collapsed ? '50px' : activeWidth }"></div>
+        <div class="active-bg" :style="{ top: activeTop + 'px', width: collapsed ? '46px' : activeWidth }"></div>
 
         <ul class="nav flex-column">
             <li v-for="(item, i) in menu" :key="item.to" :ref="el => setMenuRef(el, i)" class="nav-item">
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, watch } from "vue";
+import { ref, nextTick, onMounted, watch, onBeforeUnmount } from "vue";
 import { useRoute } from "vue-router";
 
 // Define props
@@ -31,7 +31,6 @@ const props = defineProps<{
 const menu = [
     { label: "Dashboard", to: "/dashboard/statistics", icon: 'pi-th-large' },
     { label: "Category", to: "/dashboard/categories", icon: 'pi-tag' },
-    { label: "Categories", to: "/dashboard/category", icon: 'pi-tag' },
     { label: "Products", to: "/dashboard/products", icon: 'pi-tags' },
     { label: "Orders", to: "/dashboard/orders", icon: 'pi-box' },
     { label: "Customers", to: "/dashboard/customers", icon: 'pi-user' },
@@ -41,7 +40,7 @@ const menu = [
 const route = useRoute();
 const menuRefs = ref<HTMLElement[]>([]);
 const activeTop = ref(0);
-const activeWidth = ref("162px");
+const activeWidth = ref("100%");
 
 // stable ref setter
 function setMenuRef(el: any, index: number) {
@@ -53,7 +52,7 @@ function moveActive(index: number) {
     const el = menuRefs.value[index];
     if (el) {
         activeTop.value = el.offsetTop;
-        // activeWidth.value = `${el.clientWidth}px`; // Match width of active item
+        activeWidth.value = `${el.clientWidth}px`; // Match width of active item
     }
 }
 
@@ -65,10 +64,19 @@ function checkActive() {
 }
 
 // set active on load
-onMounted(() => checkActive());
+onMounted(() => {
+    checkActive();
+    window.addEventListener("resize", checkActive);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener("resize", checkActive);
+});
 
 // watch collapsed state to update active highlight
-watch(() => props.collapsed, () => checkActive());
+watch(() => props.collapsed, () => {
+    checkActive()
+});
 </script>
 
 <style scoped>
@@ -136,7 +144,5 @@ watch(() => props.collapsed, () => checkActive());
 
 .nav-link:hover {
     background: rgba(255, 255, 255, 0.6);
-    width: 162px;
-    /* Lighter background on hover */
 }
 </style>

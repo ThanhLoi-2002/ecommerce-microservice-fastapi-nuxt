@@ -1,6 +1,5 @@
 <template>
     <div class="sidebar position-relative" :class="{ collapsed }">
-
         <!-- Brand -->
         <h4 class="brand" v-if="!collapsed">Clothify</h4>
 
@@ -15,7 +14,6 @@
                 </router-link>
             </li>
         </ul>
-
     </div>
 </template>
 

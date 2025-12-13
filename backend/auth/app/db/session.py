@@ -7,14 +7,19 @@ from app.db.base import Base
 engine = create_async_engine(
     settings.POSTGRES_DB_URL,
     echo=True,  # 👈 bật log SQL
-    execution_options={"prepared_statement_cache_size": 0}
+    pool_pre_ping=True,
+    pool_recycle=3600,  # 1h
+    execution_options={"prepared_statement_cache_size": 0},
 )
 AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def get_db():
     async with AsyncSessionLocal() as session:
-        yield session
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 async def create_tables():

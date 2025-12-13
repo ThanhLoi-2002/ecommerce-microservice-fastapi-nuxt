@@ -1,4 +1,3 @@
-// OrderList.vue
 <template>
     <div class="min-vh-100" style="background-color: #f8f9fa;">
         <!-- Header -->
@@ -69,87 +68,52 @@
 
                     <!-- Thống kê nhanh -->
                     <div class="row mb-4">
-                        <div class="col-md-2">
-                            <div class="stat-card bg-info">
-                                <div class="stat-value">{{ stats.total }}</div>
-                                <div class="stat-label">Tổng đơn</div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="stat-card bg-warning">
-                                <div class="stat-value">{{ stats.pending }}</div>
-                                <div class="stat-label">Chờ xác nhận</div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="stat-card bg-primary">
-                                <div class="stat-value">{{ stats.processing }}</div>
-                                <div class="stat-label">Đang xử lý</div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="stat-card bg-success">
-                                <div class="stat-value">{{ stats.delivered }}</div>
-                                <div class="stat-label">Đã giao</div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="stat-card bg-danger">
-                                <div class="stat-value">{{ stats.cancelled }}</div>
-                                <div class="stat-label">Đã hủy</div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="stat-card bg-dark">
-                                <div class="stat-value">{{ formatCurrency(stats.revenue) }}</div>
-                                <div class="stat-label">Doanh thu</div>
+                        <div class="col-md-2" v-for="(v, key) in statBlocks" :key="key">
+                            <div class="stat-card text-white text-center py-3 rounded"
+                                :class="v.bg">
+                                <div class="stat-value">{{ v.value }}</div>
+                                <div class="stat-label">{{ v.label }}</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Loading -->
                     <div v-if="loading" class="text-center py-5">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
+                        <div class="spinner-border text-primary"></div>
                     </div>
 
-                    <!-- Bảng đơn hàng -->
+                    <!-- Table -->
                     <div v-else class="table-responsive">
                         <table class="table table-hover table-bordered">
                             <thead class="thead-light">
                                 <tr>
-                                    <th width="100">Mã đơn</th>
-                                    <th width="150">Khách hàng</th>
-                                    <th width="120">Ngày đặt</th>
-                                    <th width="80">SL</th>
-                                    <th width="120">Tổng tiền</th>
-                                    <th width="120">Thanh toán</th>
-                                    <th width="150">Trạng thái</th>
-                                    <th width="200">Thao tác</th>
+                                    <th>Mã đơn</th>
+                                    <th>Khách hàng</th>
+                                    <th>Ngày đặt</th>
+                                    <th>SL</th>
+                                    <th>Tổng tiền</th>
+                                    <th>Thanh toán</th>
+                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="order in orders" :key="order.id">
+                                    <td><strong class="text-primary">#{{ order.code }}</strong></td>
+
                                     <td>
-                                        <strong class="text-primary">#{{ order.code }}</strong>
+                                        <strong>{{ order.customerName }}</strong><br>
+                                        <small class="text-muted">{{ order.customerPhone }}</small>
                                     </td>
-                                    <td>
-                                        <div>
-                                            <strong>{{ order.customerName }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ order.customerPhone }}</small>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <small>{{ formatDateTime(order.createdAt) }}</small>
-                                    </td>
+
+                                    <td><small>{{ formatDateTime(order.createdAt) }}</small></td>
+
                                     <td class="text-center">
                                         <span class="badge badge-secondary badge-pill">{{ order.totalItems }}</span>
                                     </td>
-                                    <td>
-                                        <strong class="text-success">{{ formatCurrency(order.totalAmount) }}</strong>
-                                    </td>
+
+                                    <td><strong class="text-success">{{ formatCurrency(order.totalAmount) }}</strong></td>
+
                                     <td>
                                         <span :class="getPaymentBadgeClass(order.paymentStatus)">
                                             {{ getPaymentLabel(order.paymentStatus) }}
@@ -157,9 +121,11 @@
                                         <br>
                                         <small class="text-muted">{{ order.paymentMethod }}</small>
                                     </td>
+
                                     <td>
                                         <select class="form-control form-control-sm"
-                                            :class="getStatusSelectClass(order.status)" v-model="order.status"
+                                            :class="getStatusSelectClass(order.status)"
+                                            v-model="order.status"
                                             @change="updateOrderStatus(order.id, order.status)">
                                             <option value="pending">Chờ xác nhận</option>
                                             <option value="confirmed">Đã xác nhận</option>
@@ -169,26 +135,19 @@
                                             <option value="cancelled">Đã hủy</option>
                                         </select>
                                     </td>
+
                                     <td>
-                                        <button class="btn btn-sm btn-info mr-1" title="Xem chi tiết"
-                                            @click="viewOrderDetail(order.id)">
-                                            👁️
-                                        </button>
-                                        <button class="btn btn-sm btn-primary mr-1" title="In hóa đơn"
-                                            @click="printInvoice(order.id)">
-                                            🖨️
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" title="Xóa"
-                                            @click="confirmDelete(order.id)" :disabled="order.status !== 'cancelled'">
-                                            🗑️
-                                        </button>
+                                        <button class="btn btn-sm btn-info mr-1" @click="viewOrderDetail(order.id)">👁️</button>
+                                        <button class="btn btn-sm btn-primary mr-1" @click="printInvoice(order.id)">🖨️</button>
+                                        <button class="btn btn-sm btn-danger" @click="confirmDelete(order.id)"
+                                            :disabled="order.status !== 'cancelled'">🗑️</button>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Phân trang -->
+                    <!-- Pagination -->
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <div>
                             <select class="form-control form-control-sm d-inline-block w-auto" v-model="perPage"
@@ -199,26 +158,27 @@
                                 <option :value="100">100</option>
                             </select>
                             <span class="ml-2 text-muted">
-                                Hiển thị {{ (pagination.page - 1) * perPage + 1 }} -
-                                {{ Math.min(pagination.page * perPage, pagination.total) }} /
+                                Hiển thị {{ startIndex }} - {{ endIndex }} /
                                 <strong>{{ pagination.total }}</strong> đơn hàng
                             </span>
                         </div>
-                        <nav>
-                            <ul class="pagination mb-0">
-                                <li class="page-item" :class="{ disabled: pagination.page === 1 }">
-                                    <a class="page-link" href="#" @click.prevent="changePage(pagination.page - 1)">‹</a>
-                                </li>
-                                <li v-for="page in displayPages" :key="page" class="page-item"
-                                    :class="{ active: page === pagination.page }">
-                                    <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-                                </li>
-                                <li class="page-item" :class="{ disabled: pagination.page === pagination.totalPages }">
-                                    <a class="page-link" href="#" @click.prevent="changePage(pagination.page + 1)">›</a>
-                                </li>
-                            </ul>
-                        </nav>
+
+                        <ul class="pagination mb-0">
+                            <li class="page-item" :class="{ disabled: pagination.page === 1 }">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.page - 1)">‹</a>
+                            </li>
+
+                            <li v-for="p in displayPages" :key="p"
+                                class="page-item" :class="{ active: p === pagination.page }">
+                                <a class="page-link" href="#" @click.prevent="changePage(p)">{{ p }}</a>
+                            </li>
+
+                            <li class="page-item" :class="{ disabled: pagination.page === pagination.totalPages }">
+                                <a class="page-link" href="#" @click.prevent="changePage(pagination.page + 1)">›</a>
+                            </li>
+                        </ul>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -226,7 +186,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from "vue";
 
 interface Order {
     id: number;
@@ -241,7 +201,7 @@ interface Order {
     createdAt: string;
 }
 
-// State
+/* ----------------------------- STATE ----------------------------- */
 const loading = ref(false);
 const orders = ref<Order[]>([]);
 const perPage = ref(20);
@@ -260,6 +220,16 @@ const pagination = ref({
     totalPages: 0
 });
 
+/* ----------------------------- MOCK DATA ----------------------------- */
+const mockOrders: Order[] = [
+    { id: 1, code: 'ORD001', customerName: 'Nguyễn Văn A', customerPhone: '0901234567', totalItems: 3, totalAmount: 1250000, paymentStatus: 'paid', paymentMethod: 'COD', status: 'delivered', createdAt: '2025-12-10T10:30:00' },
+    { id: 2, code: 'ORD002', customerName: 'Trần Thị B', customerPhone: '0912345678', totalItems: 2, totalAmount: 850000, paymentStatus: 'unpaid', paymentMethod: 'Banking', status: 'pending', createdAt: '2025-12-11T14:20:00' },
+    { id: 3, code: 'ORD003', customerName: 'Lê Văn C', customerPhone: '0923456789', totalItems: 5, totalAmount: 2300000, paymentStatus: 'paid', paymentMethod: 'VNPay', status: 'shipping', createdAt: '2025-12-11T16:45:00' },
+    { id: 4, code: 'ORD004', customerName: 'Phạm Thị D', customerPhone: '0934567890', totalItems: 1, totalAmount: 450000, paymentStatus: 'paid', paymentMethod: 'MoMo', status: 'processing', createdAt: '2025-12-12T09:15:00' },
+    { id: 5, code: 'ORD005', customerName: 'Hoàng Văn E', customerPhone: '0945678901', totalItems: 4, totalAmount: 1800000, paymentStatus: 'unpaid', paymentMethod: 'COD', status: 'confirmed', createdAt: '2025-12-12T11:00:00' },
+];
+
+/* ----------------------------- STAT DISPLAY ----------------------------- */
 const stats = ref({
     total: 156,
     pending: 23,
@@ -269,66 +239,151 @@ const stats = ref({
     revenue: 456780000
 });
 
-// // Mock data
-const mockOrders: Order[] = [
-    { id: 1, code: 'ORD001', customerName: 'Nguyễn Văn A', customerPhone: '0901234567', totalItems: 3, totalAmount: 1250000, paymentStatus: 'paid', paymentMethod: 'COD', status: 'delivered', createdAt: '2025-12-10T10:30:00' },
-    { id: 2, code: 'ORD002', customerName: 'Trần Thị B', customerPhone: '0912345678', totalItems: 2, totalAmount: 850000, paymentStatus: 'unpaid', paymentMethod: 'Banking', status: 'pending', createdAt: '2025-12-11T14:20:00' },
-    { id: 3, code: 'ORD003', customerName: 'Lê Văn C', customerPhone: '0923456789', totalItems: 5, totalAmount: 2300000, paymentStatus: 'paid', paymentMethod: 'VNPay', status: 'shipping', createdAt: '2025-12-11T16:45:00' },
-    { id: 4, code: 'ORD004', customerName: 'Phạm Thị D', customerPhone: '0934567890', totalItems: 1, totalAmount: 450000, paymentStatus: 'paid', paymentMethod: 'MoMo', status: 'processing', createdAt: '2025-12-12T09:15:00' },
-    { id: 5, code: 'ORD005', customerName: 'Hoàng Văn E', customerPhone: '0945678901', totalItems: 4, totalAmount: 1800000, paymentStatus: 'unpaid', paymentMethod: 'COD', status: 'confirmed', createdAt: '2025-12-12T11:00:00' },
-];
+const statBlocks = computed(() => ({
+    total: { label: "Tổng đơn", value: stats.value.total, bg: "bg-info" },
+    pending: { label: "Chờ xác nhận", value: stats.value.pending, bg: "bg-warning" },
+    processing: { label: "Đang xử lý", value: stats.value.processing, bg: "bg-primary" },
+    delivered: { label: "Đã giao", value: stats.value.delivered, bg: "bg-success" },
+    cancelled: { label: "Đã hủy", value: stats.value.cancelled, bg: "bg-danger" },
+    revenue: { label: "Doanh thu", value: formatCurrency(stats.value.revenue), bg: "bg-dark" },
+}));
 
-// // Computed
+/* ----------------------------- PAGINATION COMPUTE ----------------------------- */
+
 const displayPages = computed(() => {
     const pages: number[] = [];
     const total = pagination.value.totalPages;
     const current = pagination.value.page;
 
-    if (total <= 7) {
-        for (let i = 1; i <= total; i++) pages.push(i);
-    } else {
-        pages.push(1);
-        if (current > 3) pages.push(-1);
-        for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
-            pages.push(i);
-        }
-        if (current < total - 2) pages.push(-1);
-        pages.push(total);
-    }
+    for (let i = 1; i <= total; i++) pages.push(i);
     return pages;
 });
 
-// Methods
+const startIndex = computed(() =>
+    (pagination.value.page - 1) * perPage.value + 1
+);
+
+const endIndex = computed(() =>
+    Math.min(pagination.value.page * perPage.value, pagination.value.total)
+);
+
+/* ----------------------------- METHODS ----------------------------- */
+
 const loadOrders = () => {
+    loading.value = true;
 
-}
+    setTimeout(() => {
+        let data = [...mockOrders];
 
-const exportOrders = () => {
+        if (filters.value.search) {
+            data = data.filter(o =>
+                o.code.toLowerCase().includes(filters.value.search.toLowerCase()) ||
+                o.customerName.toLowerCase().includes(filters.value.search.toLowerCase())
+            );
+        }
 
-}
+        if (filters.value.status)
+            data = data.filter(o => o.status === filters.value.status);
+
+        if (filters.value.paymentStatus)
+            data = data.filter(o => o.paymentStatus === filters.value.paymentStatus);
+
+        pagination.value.total = data.length;
+        pagination.value.totalPages = Math.ceil(data.length / perPage.value);
+
+        const start = (pagination.value.page - 1) * perPage.value;
+        const end = start + perPage.value;
+
+        orders.value = data.slice(start, end);
+        loading.value = false;
+    }, 300);
+};
 
 const changePage = (page: number) => {
+    if (page < 1 || page > pagination.value.totalPages) return;
+    pagination.value.page = page;
+    loadOrders();
+};
 
-}
+const exportOrders = () => alert("Export Excel (demo)");
 
-const confirmDelete = (id: number) => {
+const confirmDelete = (id: number) => alert("Xóa đơn: " + id);
 
-}
+const printInvoice = (id: number) => alert("In hóa đơn: " + id);
 
-const printInvoice = (id: number) => { }
+const viewOrderDetail = (id: number) => alert("Chi tiết đơn: " + id);
 
-const viewOrderDetail = (id: number) => { }
+const updateOrderStatus = (id: number, status: string) => {
+    alert(`Cập nhật Đơn #${id} → ${status}`);
+};
 
-const updateOrderStatus = (id: number, status: string) => { }
-const getStatusSelectClass = (status: string) => { }
-const getPaymentLabel = (paymentStatus: string) => { }
+const getStatusSelectClass = (status: string) => {
+    return {
+        "border-warning": status === "pending",
+        "border-primary": status === "processing",
+        "border-success": status === "delivered",
+        "border-danger": status === "cancelled"
+    };
+};
+
+const getPaymentLabel = (paymentStatus: string) => {
+    return {
+        unpaid: "Chưa thanh toán",
+        paid: "Đã thanh toán",
+        refunded: "Đã hoàn tiền"
+    }[paymentStatus];
+};
+
 const getPaymentBadgeClass = (paymentStatus: string) => {
+    return {
+        unpaid: "badge badge-warning",
+        paid: "badge badge-success",
+        refunded: "badge badge-info"
+    }[paymentStatus];
+};
 
-}
-const formatCurrency = (price: number)=>{}
-const formatDateTime = (date: string) => {}
+const formatCurrency = (price: number) =>
+    price.toLocaleString("vi-VN") + "₫";
 
-const resetFilters =() => {}
-const showCreateModal = () => {}
-const debouncedSearch = () => {}
+const formatDateTime = (date: string) => {
+    const d = new Date(date);
+    return d.toLocaleDateString("vi-VN") + " " + d.toLocaleTimeString("vi-VN");
+};
+
+let timer: any = null;
+const debouncedSearch = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+        loadOrders();
+    }, 300);
+};
+
+const resetFilters = () => {
+    filters.value = {
+        search: "",
+        status: "",
+        paymentStatus: "",
+        fromDate: "",
+        toDate: ""
+    };
+    loadOrders();
+};
+
+const showCreateModal = () => alert("Tạo đơn hàng (demo)");
+
+onMounted(() => loadOrders());
 </script>
+
+<style scoped>
+.stat-card {
+    color: #fff;
+    border-radius: 10px;
+}
+.stat-value {
+    font-size: 20px;
+    font-weight: bold;
+}
+.stat-label {
+    font-size: 13px;
+}
+</style>

@@ -30,7 +30,6 @@ def decode_jwt(token: str) -> dict:
         )
         return decoded_token if decoded_token["exp"] >= time.time() else None
     except Exception as e:
-        print(e)
         return None
 
 

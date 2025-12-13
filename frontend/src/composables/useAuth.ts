@@ -37,8 +37,8 @@ export function useAuth() {
             const { data }: any = await authApi.signIn(form);
             setToken(data.token)
             setRefreshToken(data.refreshToken)
-            router.push('/')
             await getMe()
+            router.push('/')
         } catch (e: any) {
             toast.error(e.message)
         } finally {

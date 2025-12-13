@@ -17,7 +17,7 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="avatarDropdown">
-                    <router-link class="dropdown-item" to="#" @click="userStore.logout">
+                    <router-link class="dropdown-item" to="#" @click="logout">
                         Logout
                     </router-link>
                 </div>
@@ -27,10 +27,12 @@
 </template>
 
 <script setup lang="ts">
+import { useAuth } from '@/composables/useAuth';
 import { useUserStore } from '@/stores/user.store';
 import { DEFAULT_AVATAR } from '@/utils/constants';
 import { storeToRefs } from 'pinia';
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
+const { logout } = useAuth()
 </script>

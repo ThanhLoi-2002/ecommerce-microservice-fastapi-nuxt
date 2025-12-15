@@ -25,3 +25,8 @@ async def create_category(category: CategoryCreate, db: AsyncSessionDep):
 @router.get("", response_model=PaginatedResponse[CategoryResponse])
 async def get_categories(db: AsyncSessionDep, query: FilterCategories = Depends()):
     return await crud_category.get_categories(db, query)
+
+
+@router.get("/{id}", response_model=CategoryResponse)
+async def get_category(db: AsyncSessionDep, id: int):
+    return await crud_category.get_one(db, {"id": id})

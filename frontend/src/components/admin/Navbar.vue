@@ -5,7 +5,7 @@
         </button>
 
         <div class="d-flex align-items-center justify-content-center">
-            <div class="icon-btn mr-3">
+            <div class="p-2 rounded-circle mr-3 dropdown-item" style="cursor: pointer; transition: background-color 0.2s;">
                 <i class="pi pi-bell" style="font-size: 1.2rem"></i>
             </div>
 

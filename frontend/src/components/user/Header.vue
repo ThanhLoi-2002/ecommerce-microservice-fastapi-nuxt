@@ -1,35 +1,31 @@
 // Navbar.vue
 <template>
-    <nav class="main-navbar">
+    <nav class="sticky-top bg-white shadow">
         <!-- Top Bar -->
-        <div class="top-bar">
+        <div class="bg-dark text-white py-2 small">
             <div class="px-5">
-                <div class="top-bar-content">
-                    <div class="top-bar-left">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex">
                         <span class="text-sm">🔥 BIG SALE THÁNG 12 - GIẢM ĐẾN 50%</span>
                     </div>
-                    <div class="top-bar-right">
-                        <a href="tel:0901234567" class="text-sm">📞 Hotline: 0901 234 567</a>
+                    <div class="d-flex">
+                        📞 <a href="tel:0901234567" class="text-sm text-white">Hotline: 0901 234 567</a>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Main Navigation -->
-        <div class="navbar-main">
+        <div class=" navbar-expand-lg navbar-light bg-light py-3">
             <div class="px-5">
-                <div class="navbar-content">
-                    <!-- Logo -->
-                    <router-link class="navbar-brand" to="/">
-                        <h1 class="logo">IVYmoda</h1>
-                    </router-link>
-
+                <div class="d-flex align-items-center">
                     <!-- Main Menu -->
-                    <ul class="navbar-menu">
-                        <li class="menu-item has-dropdown" @mouseenter="activeMenu = 'female'"
+                    <ul class="navbar-nav d-flex list-unstyled m-0 p-0 flex-fill">
+                        <li class="nav-item position-relative mr-4 has-dropdown" @mouseenter="activeMenu = 'female'"
                             @mouseleave="activeMenu = null">
-                            <a href="#" class="menu-link">
-                                NỮ
+                            <a href="#"
+                                class="nav-link text-dark text-decoration-none font-weight-bold d-flex align-items-center py-2 menu-link">
+                                <span class="mr-1">NỮ</span>
                                 <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                                     <path
                                         d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
@@ -37,10 +33,11 @@
                             </a>
 
                             <!-- Mega Menu Female -->
-                            <div class="mega-menu" v-show="activeMenu === 'female'">
+                            <div class="position-absolute bg-white shadow-lg p-4 mt-2"
+                                style="min-width: 900px; z-index: 1;" v-show="activeMenu === 'female'">
                                 <div class="mega-menu-content">
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">ÁO</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">ÁO</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Áo sơ mi</a></li>
                                             <li><a href="#">Áo thun</a></li>
@@ -52,7 +49,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">ÁO KHOÁC</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">ÁO KHOÁC</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#" class="text-danger">DẠ LÔNG CỰU | SALE off 50%</a></li>
                                             <li><a href="#">Áo da/ măng tô</a></li>
@@ -60,7 +57,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">SET BỘ</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">SET BỘ</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Set bộ công sở</a></li>
                                             <li><a href="#">Set bộ co-ords</a></li>
@@ -68,7 +65,8 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">QUẦN & JUMPSUIT</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">QUẦN & JUMPSUIT
+                                        </h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Quần dài</a></li>
                                             <li><a href="#">Quần jeans</a></li>
@@ -77,7 +75,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">CHÂN VÁY</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">CHÂN VÁY</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Chân váy bút chì</a></li>
                                             <li><a href="#">Chân váy chữ A</a></li>
@@ -85,7 +83,8 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">ĐẦM/ ÁO DÀI</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">ĐẦM/ ÁO DÀI
+                                        </h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Đầm công sở</a></li>
                                             <li><a href="#">Đầm voan hoa/ maxi</a></li>
@@ -97,10 +96,11 @@
                             </div>
                         </li>
 
-                        <li class="menu-item has-dropdown" @mouseenter="activeMenu = 'male'"
+                        <li class="nav-item position-relative mr-4 has-dropdown" @mouseenter="activeMenu = 'male'"
                             @mouseleave="activeMenu = null">
-                            <a href="#" class="menu-link">
-                                NAM
+                            <a href="#"
+                                class="nav-link text-dark text-decoration-none font-weight-bold d-flex align-items-center py-2 menu-link">
+                                <span class="mr-1">NAM</span>
                                 <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                                     <path
                                         d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
@@ -108,10 +108,11 @@
                             </a>
 
                             <!-- Mega Menu Male -->
-                            <div class="mega-menu" v-show="activeMenu === 'male'">
+                            <div class="position-absolute bg-white shadow-lg p-4 mt-2"
+                                style="min-width: 900px; z-index: 1;" v-show="activeMenu === 'male'">
                                 <div class="mega-menu-content">
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">ÁO</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">ÁO</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Áo sơ mi</a></li>
                                             <li><a href="#">Áo thun</a></li>
@@ -121,7 +122,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">ÁO KHOÁC</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">ÁO KHOÁC</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Áo khoác jean</a></li>
                                             <li><a href="#">Áo khoác da</a></li>
@@ -130,7 +131,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">QUẦN</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">QUẦN</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Quần jean</a></li>
                                             <li><a href="#">Quần kaki</a></li>
@@ -139,7 +140,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">PHỤ KIỆN</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">PHỤ KIỆN</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Cà vạt</a></li>
                                             <li><a href="#">Thắt lưng</a></li>
@@ -151,14 +152,17 @@
                             </div>
                         </li>
 
-                        <li class="menu-item">
-                            <a href="#" class="menu-link text-danger font-weight-bold">BIG SALE THÁNG 12</a>
+                        <li class="nav-item position-relative mr-4">
+                            <a href="#"
+                                class="nav-link text-dark text-decoration-none font-weight-bold d-flex align-items-center py-2 menu-link text-danger font-weight-bold">BIG
+                                SALE THÁNG 12</a>
                         </li>
 
-                        <li class="menu-item has-dropdown" @mouseenter="activeMenu = 'collection'"
+                        <li class="nav-item position-relative mr-4 has-dropdown" @mouseenter="activeMenu = 'collection'"
                             @mouseleave="activeMenu = null">
-                            <a href="#" class="menu-link">
-                                BỘ SƯU TẬP
+                            <a href="#"
+                                class="nav-link text-dark text-decoration-none font-weight-bold d-flex align-items-center py-2 menu-link">
+                                <span class="mr-1">BỘ SƯU TẬP</span>
                                 <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
                                     <path
                                         d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
@@ -166,10 +170,11 @@
                             </a>
 
                             <!-- Mega Menu Collection -->
-                            <div class="mega-menu" v-show="activeMenu === 'collection'">
+                            <div class="position-absolute bg-white shadow-lg p-4 mt-2"
+                                style="min-width: 900px; z-index: 1;" v-show="activeMenu === 'collection'">
                                 <div class="mega-menu-content">
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">THEO MÙA</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">THEO MÙA</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Xuân hè 2025</a></li>
                                             <li><a href="#">Thu đông 2024</a></li>
@@ -177,7 +182,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">PHONG CÁCH</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">PHONG CÁCH</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Office wear</a></li>
                                             <li><a href="#">Street style</a></li>
@@ -186,7 +191,7 @@
                                         </ul>
                                     </div>
                                     <div class="mega-menu-column">
-                                        <h3 class="mega-menu-title">ĐẶC BIỆT</h3>
+                                        <h3 class="small font-weight-bold mb-3 text-dark text-uppercase">ĐẶC BIỆT</h3>
                                         <ul class="mega-menu-list">
                                             <li><a href="#">Limited Edition</a></li>
                                             <li><a href="#">Designer Collection</a></li>
@@ -196,29 +201,30 @@
                                 </div>
                             </div>
                         </li>
-
-                        <li class="menu-item">
-                            <a href="#" class="menu-link">VỀ CHÚNG TÔI</a>
-                        </li>
                     </ul>
+
+                    <!-- Logo -->
+                    <router-link class="h3 font-weight-bold text-dark m-0 flex-grow-1" to="/">
+                        <h3 class="text-black">IVYmoda</h3>
+                    </router-link>
 
                     <!-- Right Actions -->
                     <div class="navbar-actions">
                         <!-- Search -->
-                        <div class="search-box" @mouseenter="showSearchSuggestions = true"
-                            @mouseleave="showSearchSuggestions = false">
-                            <input type="text" class="search-input" placeholder="Tìm kiếm sản phẩm..."
-                                v-model="searchQuery" @focus="showSearchSuggestions = true" />
-                            <button class="search-btn">
-                                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <path d="m21 21-4.35-4.35"></path>
-                                </svg>
+                        <div class="position-relative" @focusin="showSearchSuggestions = true"
+                            @focusout="showSearchSuggestions = false" tabindex="-1">
+                            <input type="text" class="form-control rounded-pill cursor-pointer"
+                                placeholder="Tìm kiếm sản phẩm..." v-model="searchQuery"
+                                @focus="showSearchSuggestions = true" />
+                            <button class="btn btn-link position-absolute bg-transparent border-0 text-muted"
+                                style="right: 10px; top: 50%; transform: translateY(-50%);">
+                                <i class="pi pi-search"/>
                             </button>
 
                             <!-- Search Suggestions -->
-                            <div class="search-suggestions" v-show="showSearchSuggestions && searchQuery.length > 0">
+                            <div class="position-absolute bg-white shadow-lg rounded p-3 mt-2"
+                                style="top: calc(100% + 10px); max-height: 300px; min-width: 350px; overflow-y: auto;"
+                                v-show="showSearchSuggestions">
                                 <div class="suggestions-header">
                                     <h4>Tìm kiếm nhiều nhất</h4>
                                 </div>
@@ -240,25 +246,18 @@
                             </div>
                         </div>
 
-                        <!-- Hotline -->
-                        <button class="icon-btn" title="Hotline">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                                </path>
-                            </svg>
-                        </button>
+                        <div class="dropdown" v-if="isAuth">
+                            <a class="d-flex align-items-center dropdown-toggle" href="#" role="button"
+                                id="avatarDropdown" data-toggle="dropdown">
+                                <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar"
+                                    class="rounded-circle border"
+                                    style="width: 38px; height: 38px; object-fit: cover;" />
+                            </a>
 
-                        <!-- User Account -->
-                        <div class="user-menu" v-if="isAuth">
-                            <button class="icon-btn user-btn" @click="toggleUserMenu">
-                                <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar" class="user-avatar" />
-                            </button>
-
-                            <div class="user-dropdown" v-show="showUserMenu">
+                            <div class="dropdown-menu dropdown-menu-right mt-2 px-2" aria-labelledby="avatarDropdown">
                                 <div class="user-info">
-                                    <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar">
+                                    <img :src="user?.avatar?.url || DEFAULT_AVATAR" alt="avatar"
+                                        class="rounded-circle border">
                                     <div>
                                         <p class="user-name">{{ user?.name }}</p>
                                         <p class="user-email">{{ user?.email }}</p>
@@ -294,18 +293,14 @@
                                 </button>
                             </div>
                         </div>
-                        <button v-else class="btn-login" @click="$router.push('/auth/signin')">
+
+                        <button v-else class="btn btn-primary" @click="$router.push('/auth/signin')">
                             Đăng nhập
                         </button>
 
                         <!-- Cart -->
-                        <router-link to="/cart" class="icon-btn cart-btn">
-                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                            </svg>
+                        <router-link to="/cart" class="position-relative rounded-circle border p-2 d-flex">
+                            <i class="pi pi-shopping-cart" style="font-size: 20px;" />
                             <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
                         </router-link>
                     </div>
@@ -333,7 +328,6 @@ const { logout } = useAuth();
 // State
 const activeMenu = ref<string | null>(null);
 const showSearchSuggestions = ref(false);
-const showUserMenu = ref(false);
 const searchQuery = ref('');
 const cartCount = ref(3);
 
@@ -361,127 +355,19 @@ const filteredProducts = computed(() => {
 const formatPrice = (price: number): string => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 };
-
-const toggleUserMenu = () => {
-    showUserMenu.value = !showUserMenu.value;
-};
 </script>
 
 <style scoped>
-.main-navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Top Bar */
-.top-bar {
-    background: #000;
-    color: white;
-    padding: 8px 0;
-    font-size: 0.85rem;
-}
-
-.top-bar-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.top-bar-left,
-.top-bar-right {
-    display: flex;
-    gap: 20px;
-}
-
-.top-bar a {
-    color: white;
-    text-decoration: none;
-}
-
-.top-bar a:hover {
-    text-decoration: underline;
-}
-
-/* Main Navbar */
-.navbar-main {
-    padding: 15px 0;
-}
-
-.navbar-content {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-}
-
-.navbar-brand {
-    text-decoration: none;
-}
-
-.logo {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #000;
-    margin: 0;
-}
-
 /* Menu */
-.navbar-menu {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 35px;
-    flex: 1;
-}
-
-.menu-item {
-    position: relative;
-}
-
-.menu-link {
-    color: #000;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 8px 0;
-    transition: color 0.3s;
-}
-
 .menu-link:hover {
-    color: #e63946;
+    color: #e63946 !important;
 }
 
 /* Mega Menu */
-.mega-menu {
-    position: absolute;
-    top: 100%;
-    left: -50px;
-    background: white;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    padding: 30px;
-    min-width: 900px;
-    margin-top: 10px;
-    z-index: 100;
-}
-
 .mega-menu-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 30px;
-}
-
-.mega-menu-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    color: #000;
-    text-transform: uppercase;
 }
 
 .mega-menu-list {
@@ -505,6 +391,15 @@ const toggleUserMenu = () => {
     color: #e63946;
 }
 
+.has-dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+}
+
 /* Right Actions */
 .navbar-actions {
     display: flex;
@@ -512,51 +407,7 @@ const toggleUserMenu = () => {
     gap: 15px;
 }
 
-/* Search Box */
-.search-box {
-    position: relative;
-}
-
-.search-input {
-    width: 300px;
-    padding: 10px 40px 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.search-input:focus {
-    border-color: #000;
-}
-
-.search-btn {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #666;
-}
-
 /* Search Suggestions */
-.search-suggestions {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 0;
-    right: 0;
-    background: white;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    border-radius: 8px;
-    padding: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    z-index: 100;
-}
-
 .suggestions-header h4 {
     font-size: 0.85rem;
     font-weight: 600;
@@ -573,15 +424,17 @@ const toggleUserMenu = () => {
 
 .suggestion-tag {
     padding: 6px 12px;
-    background: #f0f0f0;
-    border-radius: 15px;
+    background: white;
+    border: 1px solid rgb(77, 77, 77);
+    border-bottom-right-radius: 6px;
+    border-top-left-radius: 6px;
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 0.3s;
 }
 
 .suggestion-tag:hover {
-    background: #e0e0e0;
+    border: 1px solid #c4c1c1;
 }
 
 .suggestions-divider {
@@ -633,25 +486,6 @@ const toggleUserMenu = () => {
     font-weight: 600;
 }
 
-/* Icon Buttons */
-.icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: #f8f8f8;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.icon-btn:hover {
-    background: #e8e8e8;
-}
-
 .user-avatar {
     width: 40px;
     height: 40px;
@@ -676,10 +510,6 @@ const toggleUserMenu = () => {
 }
 
 /* User Dropdown */
-.user-menu {
-    position: relative;
-}
-
 .user-dropdown {
     position: absolute;
     top: calc(100% + 10px);
@@ -714,15 +544,5 @@ const toggleUserMenu = () => {
 .user-email {
     font-size: 0.85rem;
     color: #666;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background: #eee;
-    margin: 10px 0;
-}
-
-.dropdown-item {
-    display: flex
 }
 </style>

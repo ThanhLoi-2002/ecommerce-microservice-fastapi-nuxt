@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="card product-card h-100">
     <img :src="image" class="card-img-top" alt="Product" />
 
@@ -19,4 +19,4 @@ defineProps({
   price: Number,
   image: String,
 })
-</script>
+</script> -->

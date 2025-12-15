@@ -6,45 +6,54 @@ html,
 body,
 #app {
   height: 100%;
+  overflow-x: hidden;
 }
 
-.icon-xs {
-  width: 12px;
-  height: 12px;
+a,
+a:hover {
+  text-decoration: none;
 }
 
-.icon-sm {
-  width: 16px;
-  height: 16px;
-}
-
-.icon-md {
-  width: 20px;
-  height: 20px;
-}
-
-.icon-lg {
-  width: 24px;
-  height: 24px;
-}
-
-.icon-xl {
-  width: 32px;
-  height: 32px;
-}
-
-.icon {
-  color: currentColor;
-  stroke-width: 1.7;
-}
-
-.icon-btn {
-  padding: 8px;
-  border-radius: 50%;
-  transition: background-color 0.2s;
+.cursor-pointer {
   cursor: pointer;
 }
 
-.icon-btn:hover {
-  background-color: #f1f1f1;
+button:focus {
+  outline: none;
+}
+
+/* Tùy chỉnh thanh cuộn cho toàn bộ trang */
+::-webkit-scrollbar {
+  width: 4px; /* Chiều rộng của thanh cuộn dọc */
+  height: 4px; /* Chiều cao của thanh cuộn ngang */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Màu nền của thanh cuộn */
+  border-radius: 5px; /* Góc bo cho track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(128, 180, 248); /* Màu của thanh cuộn */
+  border-radius: 5px; /* Góc bo cho thanh cuộn */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(128, 180, 248, 0.5); /* Màu thanh cuộn khi hover */
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  height: 4px; /* Chiều cao cho thanh cuộn ngang */
+}
+
+/* Thay đổi cho Firefox */
+.scrollable-content {
+  scrollbar-width: thin; /* Thanh cuộn mảnh */
+  scrollbar-color: #888 #f1f1f1; /* Màu thanh cuộn và track */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

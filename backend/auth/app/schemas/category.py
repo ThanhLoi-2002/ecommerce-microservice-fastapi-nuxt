@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
+from app.db.models.category import GenderEnum
 from app.schemas.type import BaseFilter, Image, PaginationParams
 
 
@@ -10,6 +11,7 @@ class CategoryCreate(BaseModel):
     description: Optional[str] = None
     pid: Optional[int] = None
     status: bool = True
+    gender: GenderEnum
 
 
 class CategoryUpdate(BaseModel):
@@ -18,13 +20,15 @@ class CategoryUpdate(BaseModel):
     description: Optional[str] = None
     pid: Optional[int] = None
     status: Optional[bool] = None
+    gender: Optional[GenderEnum] = GenderEnum.MALE
 
 
 class FilterCategories(PaginationParams, BaseFilter):
-    name: Optional[str] = Field(None, min_length=1, max_length=255)
+    name: Optional[str] = Field(None, max_length=255)
     pid: Optional[int] = None
     status: Optional[bool] = None
     parent_only: bool = False
+    is_metadata: bool = False
 
     # method return attributes
     def get_attributes(self):
@@ -39,6 +43,7 @@ class FilterCategories(PaginationParams, BaseFilter):
             limit,
             sortBy,
             sortOrder,
+            self.is_metadata
         )
 
 
@@ -46,13 +51,14 @@ class CategoryResponse(BaseModel):
     id: int
     slug: str
     name: str
-    img: Image
+    img: Optional[Image] = None
     pid: Optional[int] = None
     description: Optional[str] = None
     status: bool
     created_at: datetime
     updated_at: datetime
     children_count: Optional[int] = 0
+    parent: Optional[CategoryResponse] = None
 
     class Config:
         from_attributes = True

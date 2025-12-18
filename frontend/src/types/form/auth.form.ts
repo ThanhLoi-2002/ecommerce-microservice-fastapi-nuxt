@@ -1,10 +1,10 @@
-export interface SignUpFormType {
+export type SignUpFormType = {
     name: string,
     email: string,
     password: string
 }
 
-export interface SignInFormType {
+export type SignInFormType = {
     email: string,
     password: string
 }

@@ -1,7 +1,7 @@
 import { useUser } from '@/composables/useUser';
 import { useAuthStore } from '@/stores/auth.store';
 import { useUserStore } from '@/stores/user.store';
-import { RoleEnum } from '@/types/entities';
+import { RoleEnum } from '@/types/common';
 import { getToken } from '@/utils/token';
 import { storeToRefs } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router';

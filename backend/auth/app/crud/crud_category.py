@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import and_, desc, func, select
+from sqlalchemy import and_, case, desc, func, select
 from typing import Any, Dict, Optional, List
 from app.db.models.category import Category
 from app.schemas.category import CategoryResponse, FilterCategories
@@ -94,6 +94,7 @@ class CRUDCategory:
             limit,
             sortBy,
             sortOrder,
+            is_metadata,
         ) = query.get_attributes()
 
         # === BASE SELECT ===
@@ -108,7 +109,8 @@ class CRUDCategory:
 
         if parent_only:
             stmt = stmt.where(Category.pid.is_(None))
-        elif pid is not None:
+        
+        if pid is not None:
             stmt = stmt.where(Category.pid == pid)
 
         # === RELATIONS ===
@@ -143,12 +145,37 @@ class CRUDCategory:
 
         total_pages = (total + limit - 1) // limit
 
+        # query metadata
+        metadata = None
+
+        if is_metadata:
+            meta_stmt = select(
+                func.count(Category.id).label("total"),
+                func.sum(case((Category.status == True, 1), else_=0)).label("activeCount"),
+                func.sum(case((Category.pid.is_(None), 1), else_=0)).label(
+                    "parentCount"
+                ),
+                func.sum(case((Category.pid.is_not(None), 1), else_=0)).label(
+                    "childrenCount"
+                ),
+            )
+
+            meta_result = await db.execute(meta_stmt)
+            row = meta_result.one()
+
+            metadata = {
+                "activeCount": row.activeCount or 0,
+                "parentCount": row.parentCount or 0,
+                "childrenCount": row.childrenCount or 0,
+            }
+
         return PaginatedResponse(
             items=items,
             total=total,
             page=page,
             limit=limit,
             total_pages=total_pages,
+            metadata=metadata
         )
 
     # @staticmethod
@@ -200,11 +227,11 @@ class CRUDCategory:
             )
 
         # Check if category has children
-        children_count = await (
-            db.query(func.count(Category.id)).filter(Category.pid == id).scalar()
-        )
-        if children_count > 0:
-            raise ValueError("Cannot delete category with children")
+        # children_count = await (
+        #     db.query(func.count(Category.id)).filter(Category.pid == id).scalar()
+        # )
+        # if children_count > 0:
+        #     raise ValueError("Cannot delete category with children")
 
         await db.delete(category)
         await db.commit()

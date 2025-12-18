@@ -23,6 +23,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
     page: int
     limit: int
     total_pages: int
+    metadata: Optional[dict] = None
 
     class Config:
         from_attributes = True
@@ -30,7 +31,7 @@ class PaginatedResponse(BaseModel, Generic[T]):
 
 class PaginationParams(BaseModel):
     page: int = Query(1, ge=1)
-    limit: int = Query(10, ge=1, le=100)
+    limit: int = Query(1, ge=1, le=100)
 
     def get_attributes(self):
         return self.page, self.limit

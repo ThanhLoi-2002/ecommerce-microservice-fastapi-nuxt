@@ -1,18 +1,18 @@
 <template>
-  <div :class="['pi pi-spinner-dotted', 'spinning']" :style="{ fontSize: size }"></div>
+  <div 
+    :class="['pi', 'pi-spinner-dotted', 'spinning', customClass]" 
+    :style="{ fontSize: size || '20px' }"
+  ></div>
 </template>
 
-
 <script setup lang="ts">
-const props = defineProps({
-  size: {
-    type: String,
-    default: '20px', // Giá trị mặc định
-  },
-});
+const props = defineProps<{
+  size?: string; // Made size optional
+  customClass?: string; // Made class optional
+}>();
 </script>
 
-<style>
+<style scoped>
 .spinning {
   animation: spin 1s linear infinite;
 }
@@ -21,7 +21,6 @@ const props = defineProps({
   from {
     transform: rotate(0deg);
   }
-
   to {
     transform: rotate(360deg);
   }

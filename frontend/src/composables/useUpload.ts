@@ -1,6 +1,6 @@
 import mediaApi from "@/api/media.api"
 import { useToast } from "./useToast"
-import type { ImageType } from "@/types/entities"
+import type { ImageType } from "@/types/common"
 
 export function useUpload() {
     const toast = useToast()

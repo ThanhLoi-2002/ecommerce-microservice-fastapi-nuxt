@@ -5,7 +5,7 @@ import type { UserProfileFormType } from '@/types/form/user.form';
 import { reactive } from 'vue';
 import { useToast } from './useToast';
 import { useAuthStore } from '@/stores/auth.store';
-import type { ImageType } from '@/types/entities';
+import type { ImageType } from '@/types/common';
 import { useUpload } from './useUpload';
 import mediaApi from '@/api/media.api';
 import { storeToRefs } from 'pinia';

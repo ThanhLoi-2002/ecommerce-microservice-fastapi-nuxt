@@ -9,7 +9,7 @@ import { authApi } from '@/api/auth.api';
 import { useUser } from './useUser';
 import { useUserStore } from '@/stores/user.store';
 import { storeToRefs } from 'pinia';
-import { RoleEnum } from '@/types/entities';
+import { RoleEnum } from '@/types/common';
 
 const signUpFormValue: SignUpFormType = {
     name: "",

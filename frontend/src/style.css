@@ -9,6 +9,10 @@ body,
   overflow-x: hidden;
 }
 
+.table td {
+    vertical-align: middle;
+}
+
 a,
 a:hover {
   text-decoration: none;

@@ -13,7 +13,7 @@
 
                     <!-- Thống kê tổng quan -->
                     <Summary :total="total" :parentCount="metadata.parentCount" :childrenCount="metadata.childrenCount"
-                        :activeCount="metadata.activeCount"/>
+                        :activeCount="metadata.activeCount" />
 
                     <!-- Loading -->
                     <div v-if="isLoading" class="text-center py-5">
@@ -41,40 +41,39 @@
                                             <div>
                                                 <h5 class="card-title mb-1">
                                                     <img v-if="category.img" :src="category.img.url"
-                                                        :alt="category.name" class="category-img me-2" />
-                                                    {{ category.name }}
+                                                        :alt="category.name" class="category-img" />
                                                 </h5>
                                             </div>
-                                            <span
-                                                :class="category.status === true ? 'badge badge-success' : 'badge badge-secondary'">
-                                                {{ category.status === true ? 'Hoạt động' : 'Tắt' }}
-                                            </span>
+
+                                            <div class="d-flex flex-column align-items-end gap-1">
+                                                <span v-if="category.pid" class="badge badge-info">
+                                                    {{ category.parent?.name }} ({{ categoryGender(category.parent?.gender) }})
+                                                </span>
+                                                <span v-else class="badge badge-secondary">Danh mục gốc</span>
+                                                <Switch v-model="category.status"
+                                                    :onClick="() => changeStatus(category.id, !category.status)" />
+                                            </div>
+
                                         </div>
-
-                                        <p class="card-text text-muted mb-3 text-truncate" style="min-height: 25px;">
-                                            {{ category.description }}
-                                        </p>
-
-                                        <span v-if="category.pid" class="badge badge-info">
-                                            {{ category.parent?.name }}
-                                        </span>
-                                        <span v-else class="badge badge-secondary">Danh mục gốc</span>
+                                        <div>{{ category.name }}
+                                            ({{ categoryGender(category.gender) }})</div>
 
                                         <div class="d-flex justify-content-between align-items-center">
                                             <small class="text-muted">
                                                 Cập nhật: {{ formatDate(category.updated_at) }}
                                             </small>
-                                            <div>
-                                                <button class="btn btn-sm btn-outline-info mr-1" title="Xem sản phẩm"
-                                                    @click="viewProducts(category.id)">
+                                            <div class="d-flex gap-1 flex-wrap justify-content-end">
+                                                <button class="btn btn-sm btn-outline-info" title="Xem sản phẩm"
+                                                    @click="viewProducts(category.id)"
+                                                    v-if="category.children_count > 0">
                                                     👁️
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-warning mr-1" title="Chỉnh sửa"
+                                                <button class="btn btn-sm btn-outline-warning" title="Chỉnh sửa"
                                                     @click="editCategory(category.id)">
                                                     ✏️
                                                 </button>
                                                 <button class="btn btn-sm btn-outline-danger" title="Xóa"
-                                                    @click="deleteCategory(category.id)">
+                                                    @click="openConfirmModal(category.id, category.name)">
                                                     🗑️
                                                 </button>
                                             </div>
@@ -92,7 +91,7 @@
                                         <th width="50">#</th>
                                         <th width="80">Hình ảnh</th>
                                         <th>Tên danh mục</th>
-                                        <th>Mô tả</th>
+                                        <!-- <th>Mô tả</th> -->
                                         <th>Danh mục cha</th>
                                         <th width="120">Trạng thái</th>
                                         <th width="150">Thao tác</th>
@@ -103,19 +102,17 @@
                                         <td>{{ (filters.page - 1) * filters.limit + index + 1 }}</td>
                                         <td style="text-align: center;"><img v-if="category.img" :src="category.img.url"
                                                 :alt="category.name" class="category-img me-2" /></td>
-                                        <td><strong>{{ category.name }}</strong></td>
-                                        <td><small class="text-muted">{{ category.description }}</small></td>
+                                        <td><strong>{{ category.name }}</strong> ({{ category.gender }})</td>
+                                        <!-- <td><small class="text-muted">{{ category.description }}</small></td> -->
                                         <td>
                                             <span v-if="category.pid" class="badge badge-info">
-                                                {{ category.parent?.name }}
+                                                {{ category.parent?.name }} ({{ category.parent?.gender }})
                                             </span>
                                             <span v-else class="badge badge-secondary">Danh mục gốc</span>
                                         </td>
                                         <td>
-                                            <span
-                                                :class="category.status === true ? 'badge badge-success' : 'badge badge-secondary'">
-                                                {{ category.status === true ? 'Hoạt động' : 'Tắt' }}
-                                            </span>
+                                            <Switch v-model="category.status"
+                                                :onClick="() => changeStatus(category.id, !category.status)" />
                                         </td>
                                         <td>
                                             <button class="btn btn-sm btn-info mr-1" title="Xem sản phẩm"
@@ -123,7 +120,7 @@
                                             <button class="btn btn-sm btn-warning mr-1" title="Chỉnh sửa"
                                                 @click="editCategory(category.id)">✏️</button>
                                             <button class="btn btn-sm btn-danger" title="Xóa"
-                                                @click="deleteCategory(category.id)">🗑️</button>
+                                                @click="openConfirmModal(category.id, category.name)">🗑️</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -141,7 +138,16 @@
         <!-- Modal Create/Edit -->
         <Modal :open="modalVisible" :title="id ? '✏️ Chỉnh sửa danh mục' : '➕ Thêm danh mục mới'"
             :closeModal="closeModal">
-            <CategoryForm :closeModal="closeModal" :filters="filters" :resetFilters="resetFilters" :id="id"/>
+            <CategoryForm :closeModal="closeModal" :filters="filters" :resetFilters="resetFilters" :id="id" />
+        </Modal>
+
+        <!-- Delete Confirm Modal -->
+        <ConfirmModal :onConfirm="() => removeCategory()" :isOpen="isOpenConfirmModal"
+            :onClose="() => closeConfirmModal()" :text="categoryName" />
+
+        <!-- Modal Danh mục con -->
+        <Modal :open="childModalVisible" title="📂 Danh mục con" :closeModal="() => childModalVisible = false">
+            <CategoryChildren :category="selectedCategory"/>
         </Modal>
     </div>
 </template>
@@ -153,7 +159,6 @@ import type { CategoryFilter } from '@/types/common';
 import LoadingSpinner from '@/components/common/loading/LoadingSpinner.vue';
 import Action from '@/components/admin/Action.vue';
 import Filters from './components/Filters.vue';
-import type { CategoryType } from '@/types/entities';
 import { useCategoryStore } from '@/stores/category.store';
 import { storeToRefs } from 'pinia';
 import { useCategory } from '@/composables/useCategory';
@@ -163,18 +168,27 @@ import Summary from './components/Summary.vue';
 import { formatDate } from '@/utils/date'
 import Modal from '@/components/common/modal/Modal.vue';
 import CategoryForm from './components/CategoryForm.vue';
+import ConfirmModal from '@/components/common/modal/ConfirmModal.vue';
+import Switch from '@/components/common/switch/Switch.vue';
+import type { CategoryType } from '@/types/entities';
+import CategoryChildren from './components/CategoryChildren.vue';
+import { categoryGender } from '@/utils/translateFromEnum';
 
 // State
-const { getCategories } = useCategory()
+const { getCategories, deleteCategory, changeStatus } = useCategory()
 const categoryStore = useCategoryStore()
 const { isLoading, categories, total_pages, total, metadata } = storeToRefs(categoryStore)
 
 const filters = ref<CategoryFilter>(categoryFilterDefault);
 const modalVisible = ref(false);
+const isOpenConfirmModal = ref(false);
 const viewMode = ref<string>('cards')
 const id = ref<number | undefined>(undefined)
+const categoryName = ref<string>('')
+const childModalVisible = ref(false)
+const selectedCategory = ref<CategoryType>()
 
-const toggleView = (): void => {
+const toggleView: any = (): void => {
     viewMode.value = viewMode.value === 'cards' ? 'table' : 'cards';
 };
 
@@ -215,22 +229,34 @@ const closeModal = () => {
     modalVisible.value = false;
 };
 
+const openConfirmModal = (selectedId: number, name: string) => {
+    isOpenConfirmModal.value = true
+    id.value = selectedId
+    categoryName.value = name
+}
+
+const closeConfirmModal = () => {
+    isOpenConfirmModal.value = false
+    id.value = undefined
+    categoryName.value = ''
+}
+
 // Methods
 const viewProducts = (id: number): void => {
-    console.log('Xem sản phẩm của danh mục:', id);
+    const category = categories.value.find(c => c.id === id)
+    if (!category || !category.children || category.children.length === 0) return
+
+    selectedCategory.value = category
+    childModalVisible.value = true
 };
 
 const editCategory = (id: number): void => {
     showModal(id)
 };
 
-const deleteCategory = (id: number): void => {
-    if (confirm('Bạn có chắc muốn xóa danh mục này?')) {
-        // const index = categories.value.findIndex(c => c.id === id);
-        // if (index !== -1) {
-        //     categories.value.splice(index, 1);
-        // }
-    }
+const removeCategory = async () => {
+    await deleteCategory(id.value!)
+    getCategories(filters.value)
 };
 
 // Lifecycle

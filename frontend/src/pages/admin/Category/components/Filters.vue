@@ -12,8 +12,8 @@
             </select>
         </div>
         <div class="col-md-2">
-            <select class="form-control" v-model="filters.parentOnly"
-                @change="setFilters('parentOnly', filters.parentOnly)">
+            <select class="form-control" v-model="filters.parent_only"
+                @change="setFilters('parent_only', filters.parent_only)">
                 <option :value="undefined">Tất cả</option>
                 <option :value="true">Danh mục cha</option>
             </select>

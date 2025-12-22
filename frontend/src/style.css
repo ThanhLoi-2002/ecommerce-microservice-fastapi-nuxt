@@ -61,3 +61,19 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.btn-outline-primary:focus {
+  box-shadow: none;
+}
+
+.gap-1 {
+  gap: 0.5rem
+}
+
+.gap-2 {
+  gap: 1rem
+}
+
+.gap-3 {
+  gap: 1.5rem
+}

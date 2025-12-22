@@ -18,13 +18,13 @@
         </div>
         <nav>
             <ul class="pagination mb-0">
-                <li class="page-item" :class="{ disabled: page === 1 }">
+                <li class="page-item" :class="{ disabled: page === 1 || total == 0 }">
                     <a class="page-link" href="#" @click.prevent="changePage(page - 1)">‹</a>
                 </li>
                 <li v-for="p in displayPages" :key="p" class="page-item" :class="{ active: p === page }">
                     <a class="page-link" href="#">{{ p }}</a>
                 </li>
-                <li class="page-item" :class="{ disabled: page === total_pages }">
+                <li class="page-item" :class="{ disabled: page === total_pages || total == 0 }">
                     <a class="page-link" href="#" @click.prevent="changePage(page + 1)">›</a>
                 </li>
             </ul>

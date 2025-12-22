@@ -26,10 +26,10 @@
         <div class="form-group position-relative">
             <label>Danh mục cha</label>
             <select v-model="categoryForm.pid" class="form-control">
-                <option :value="undefined">-- Không có (Danh mục gốc) --</option>
+                <option :value="null">-- Không có (Danh mục gốc) --</option>
                 <option v-for="cat in parentCategories" :key="cat.id" :value="cat.id"
                     :disabled="props.id !== undefined && cat.id === props.id">
-                    {{ cat.name }}
+                    {{ cat.name }} ({{ categoryGender(cat.gender) }})
                 </option>
             </select>
             <div class="position-absolute" style="right: 20px; top: 75%; transform: translateY(-55%);">
@@ -41,10 +41,10 @@
             name="gender" />
 
         <div class="form-group">
-            <div class="custom-control custom-switch">
-                <input type="checkbox" class="custom-control-input" id="statusSwitch" v-model="categoryForm.status" />
-                <label class="custom-control-label" for="statusSwitch">
-                    Trạng thái: {{ categoryForm.status ? '✓ Hoạt động' : '✗ Không hoạt động' }}
+            <div class="form-check d-flex align-items-center">
+                <input type="checkbox" class="form-check-input" id="statusSwitch" v-model="categoryForm.status" />
+                <label class="form-check-label" for="statusSwitch">
+                    {{ categoryForm.status ? '✓ Hoạt động' : '✗ Không hoạt động' }}
                 </label>
             </div>
         </div>
@@ -63,10 +63,12 @@ import LoadingSpinner from '@/components/common/loading/LoadingSpinner.vue';
 import Radio from '@/components/common/radio/Radio.vue';
 import UploadFile from '@/components/common/upload/UploadFile.vue';
 import { useCategory } from '@/composables/useCategory';
-import type { CategoryFilter } from '@/types/common';
+import { GenderEnum, type CategoryFilter } from '@/types/common';
 import type { CategoryType } from '@/types/entities';
-import { onBeforeMount, onMounted, onUpdated, ref, watch } from 'vue';
+import { reactive, ref } from 'vue';
 import { genderOptions } from '@/utils/constants';
+import type { CategoryFormType } from '@/types/form/category.form';
+import { categoryGender } from '@/utils/translateFromEnum';
 
 const props = defineProps<{
     closeModal: () => void
@@ -75,11 +77,22 @@ const props = defineProps<{
     resetFilters: () => void
 }>()
 
-const { categoryForm, createOrUpdate, getParentCategories, getCategory, getCategories } = useCategory()
+const categoryFormDefaultValue = (): CategoryFormType => ({
+    name: "",
+    description: "",
+    img: undefined,
+    pid: null,
+    status: true,
+    gender: GenderEnum.MALE
+})
+
+
+const { createOrUpdate, getParentCategories, getCategory, getCategories, changeImage } = useCategory()
+
+let categoryForm = reactive<CategoryFormType>(categoryFormDefaultValue());
 const isSubmitting = ref(false)
 const isLoading = ref(false)
 const isLoadingParentCategories = ref(false)
-const category = ref<CategoryType | undefined>(undefined)
 const parentCategories = ref<CategoryType[]>([])
 const errorMessage = ref(""); // To hold the error message
 
@@ -90,7 +103,7 @@ const submitForm = async () => {
     }
 
     isSubmitting.value = true
-    const result = await createOrUpdate(categoryForm)
+    const result = await createOrUpdate(categoryForm, props.id)
     isSubmitting.value = false
 
     // close form if success
@@ -101,8 +114,13 @@ const submitForm = async () => {
     }
 }
 
-const chooseFile = (file: any) => {
-    categoryForm.img = file
+const chooseFile = async (file: File) => {
+    if (!props.id) {
+        categoryForm.img = file
+    } else {
+        categoryForm.img = await changeImage(props.id, file, categoryForm.img.public_id)
+    }
+    errorMessage.value = ''
 }
 
 const chooseGender = (value: any) => {
@@ -112,26 +130,14 @@ const chooseGender = (value: any) => {
 const init = async () => {
     if (props.id) {
         isLoading.value = true
-        category.value = await getCategory(props.id)
+        Object.assign(categoryForm, (await getCategory(props.id)))
         isLoading.value = false
+    } else {
+        Object.assign(categoryForm, categoryFormDefaultValue)
     }
     isLoadingParentCategories.value = true
     parentCategories.value = await getParentCategories()
     isLoadingParentCategories.value = false
 }
 init()
-// onUpdated(async () => {
-
-// })
-
-watch(
-    category,
-    (val) => {
-        if (!val) return
-
-        // Update categoryForm fields directly
-        Object.assign(categoryForm, val);
-    },
-    { immediate: true }
-)
 </script>

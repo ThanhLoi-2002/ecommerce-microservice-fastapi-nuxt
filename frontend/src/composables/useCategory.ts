@@ -1,23 +1,13 @@
 
-import { reactive } from 'vue';
 import { useToast } from './useToast';
-import { GenderEnum, type CategoryFilter } from '@/types/common';
+import { type CategoryFilter } from '@/types/common';
 import { useUpload } from './useUpload';
 import type { CategoryFormType } from '@/types/form/category.form';
 import { useCategoryStore } from '@/stores/category.store';
 import { categoryApi } from '@/api/category.api';
-
-const categoryFormDefaultValue: CategoryFormType = {
-    name: "",
-    description: "",
-    img: undefined,
-    pid: undefined,
-    status: false,
-    gender: GenderEnum.MALE
-}
+import mediaApi from '@/api/media.api';
 
 export function useCategory() {
-    const categoryForm = reactive<CategoryFormType>(categoryFormDefaultValue);
     const categoryStore = useCategoryStore()
 
     const toast = useToast()
@@ -41,16 +31,15 @@ export function useCategory() {
         try {
             let result: any
 
-            if(!id) {
+            if (!id) {
                 result = await upload(values.img);
                 values.img = result
             }
 
-            const { data }: any = await categoryApi.createOrUpdate(values, id)
-            console.log(data)
+            const { message }: any = await categoryApi.createOrUpdate(values, id)
+            toast.success(message)
             return true
         } catch (error: any) {
-            console.log(error)
             toast.error(error.message)
             return false
         }
@@ -58,7 +47,7 @@ export function useCategory() {
 
     const getParentCategories = async () => {
         try {
-            const { data }: any = await categoryApi.getCategories({ parentOnly: true, page: 1, limit: 100 })
+            const { data }: any = await categoryApi.getCategories({ parent_only: true, page: 1, limit: 100 })
             return data.items
         } catch (error: any) {
             toast.error(error.message)
@@ -76,5 +65,43 @@ export function useCategory() {
         }
     }
 
-    return { categoryForm, getCategories, createOrUpdate, getParentCategories, getCategory }
+    const deleteCategory = async (id: number) => {
+        try {
+            const { message }: any = await categoryApi.deleteCategory(id)
+            toast.success(message)
+            return true
+        } catch (error: any) {
+            toast.error(error.message)
+            return false
+        }
+    }
+
+    const changeStatus = async (id: number, status: boolean) => {
+        try {
+            const { message }: any = await categoryApi.changeStatus(id, status)
+            toast.success(message)
+            categoryStore.setActiveCount(status)
+        } catch (error: any) {
+            toast.error(error.message)
+        }
+    }
+
+    const changeImage = async (id: number, file: File, public_id: string) => {
+        try {
+            const result = await upload(file);
+
+            if (result) {
+                const { message, data }: any = await categoryApi.changeImage(id, result)
+                toast.success(message)
+                mediaApi.deleteFile(public_id)
+                categoryStore.changeImage(id, result)
+                return data
+            }
+        } catch (error: any) {
+            toast.error(error.message)
+            return null
+        }
+    }
+
+    return { getCategories, createOrUpdate, getParentCategories, getCategory, deleteCategory, changeStatus, changeImage }
 }

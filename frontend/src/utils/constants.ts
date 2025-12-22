@@ -24,7 +24,7 @@ export const categoryFilterDefault: CategoryFilter = {
     page: 1,
     name: "",
     limit: 10,
-    parentOnly: undefined,
+    parent_only: undefined,
     sortBy: undefined,
     sortOrder: undefined,
     status: undefined,

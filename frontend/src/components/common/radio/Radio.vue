@@ -27,7 +27,6 @@ const selectedOption = ref(props.value); // Default to the first option
 
 // Update the selected option and notify the parent when it changes
 const updateSelectedOption = (e: any) => {
-    console.log(e.target.value)
     props.chooseRadio(e.target.value); // Notify the parent about the selected value
     selectedOption.value = e.target.value
 };

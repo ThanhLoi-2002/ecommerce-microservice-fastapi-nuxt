@@ -49,6 +49,6 @@ export type CategoryFilter = PageginationFilter & {
   sortBy?: string
   sortOrder?: SortEnum
   status?: boolean
-  parentOnly?: boolean
+  parent_only?: boolean
   is_metadata?: boolean
 }

@@ -23,19 +23,26 @@ async def upload(file: UploadFile = File(...)):
 
     except Exception as e:
         print(f"uploadFile: ${e}")
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
 
 @router.post("/upload/multiple")
 async def upload_multiple(files: List[UploadFile] = File(...)):
     results = []
     for file in files:
         upload = cloudinary.uploader.upload(file.file, folder="multi")
-        results.append(upload["secure_url"])
+        results.append(
+            {
+                "url": upload["secure_url"],
+                "public_id": upload["public_id"],
+                "format": upload["format"],
+                "resource_type": upload["resource_type"],
+            }
+        )
     return results
 
-@router.delete("/delete/{public_id:path}") # Sử dụng :path để hỗ trợ public_id có dấu /
+
+@router.delete("/delete/{public_id:path}")  # Sử dụng :path để hỗ trợ public_id có dấu /
 async def delete_file(public_id: str):
     result = cloudinary.uploader.destroy(public_id)
     return result

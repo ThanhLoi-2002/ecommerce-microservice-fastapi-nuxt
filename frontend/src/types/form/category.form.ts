@@ -4,7 +4,7 @@ export type CategoryFormType = {
     name: string;
     description: string
     img?: any;
-    pid?: number;
+    pid?: number | null;
     status?: boolean;
     gender: GenderEnum
 }

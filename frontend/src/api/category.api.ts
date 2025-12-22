@@ -1,4 +1,4 @@
-import type { CategoryFilter, IResponse, PaginationType } from "@/types/common";
+import type { CategoryFilter, ImageType, IResponse, PaginationType } from "@/types/common";
 import axios from "./axios";
 import type { CategoryType } from "@/types/entities";
 import type { CategoryFormType } from "@/types/form/category.form";
@@ -21,6 +21,14 @@ const getCategory = async (id: number) => {
     return await axios.get<IResponse<CategoryType>>(`/categories/${id}`);
 }
 
+const changeStatus = async (id: number, status: boolean) => {
+    return await axios.put<IResponse<CategoryType>>(`/categories/${id}`, { status });
+}
+
+const changeImage = async (id: number, img: ImageType) => {
+    return await axios.put<IResponse<CategoryType>>(`/categories/${id}`, { img });
+}
+
 const createOrUpdate = async (data: CategoryFormType, id?: number) => {
     if (id)
         return await axios.put<IResponse<CategoryType>>(`/categories/${id}`, data);
@@ -32,5 +40,5 @@ const deleteCategory = async (id: number) => {
 }
 
 export const categoryApi = {
-    getCategories, getCategory, createOrUpdate, deleteCategory
+    getCategories, getCategory, createOrUpdate, deleteCategory, changeStatus, changeImage
 }

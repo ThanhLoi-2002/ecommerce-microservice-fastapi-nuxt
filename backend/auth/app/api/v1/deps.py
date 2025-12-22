@@ -3,7 +3,7 @@ from fastapi.security import APIKeyHeader
 from typing import Annotated
 from app.core.security import decode_jwt
 from app.common.dto.models import TokenPayload
-from app.db.models.user import User
+from app.db.models.user import RoleEnum, User
 from sqlalchemy.ext.asyncio import AsyncSession
 from loguru import logger
 from app.db.session import get_db
@@ -40,3 +40,13 @@ async def get_current_user(db: AsyncSessionDep, token: TokenDep) -> User:
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+def roles_required(roles: list[RoleEnum]):
+    def role_checker(user: User = Depends(get_current_user)):
+        if user.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Not enough permissions"
+            )
+        return user
+    return role_checker

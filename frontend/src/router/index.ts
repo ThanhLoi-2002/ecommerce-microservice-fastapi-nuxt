@@ -38,6 +38,11 @@ const routes = [
         component: () => import('../pages/e-commerce/Home/Home.vue')
       },
       {
+        path: "/products/:slug",
+        name: "products",
+        component: () => import('../pages/e-commerce/Product/Products.vue')
+      },
+      {
         path: "/profile",
         name: "profile",
         component: () => import('../pages/e-commerce/Profile/Profile.vue'),
@@ -53,27 +58,27 @@ const routes = [
     children: [
       {
         path: "statistics",
-        name: "statistics",
+        name: "admin-statistics",
         component: () => import('../pages/admin/Dashboard.vue')
       },
       {
         path: "products",
-        name: "products",
+        name: "admin-products",
         component: () => import('../pages/admin/Product/ProductList.vue')
       },
       {
         path: "categories",
-        name: "categories",
+        name: "admin-categories",
         component: () => import('../pages/admin/Category/CategoryList.vue')
       },
       {
         path: "orders",
-        name: "orders",
+        name: "admin-orders",
         component: () => import('../pages/admin/Order/OrderList.vue')
       },
       {
         path: "customers",
-        name: "customers",
+        name: "admin-customers",
         component: () => import('../pages/admin/User/UserList.vue')
       },
     ]
@@ -121,7 +126,7 @@ router.beforeEach(async (to) => {
     const requiredRole = to.meta.role;
 
     if (user.value?.role == RoleEnum.ADMIN && requiredRole == RoleEnum.USER) {
-      return { name: "statistics" }
+      return { name: "admin-statistics" }
     }
   }
 

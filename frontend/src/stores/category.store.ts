@@ -1,4 +1,4 @@
-import type { PaginationType } from '@/types/common';
+import type { GenderEnum, ImageType, PaginationType } from '@/types/common';
 import type { CategoryType } from './../types/entities';
 import { defineStore } from "pinia";
 
@@ -11,6 +11,12 @@ export const useCategoryStore = defineStore("category", {
         metadata: {} as any
     }),
 
+    getters: {
+        categoriesByGender: (state) => {
+            return (gender: GenderEnum) => state.categories.filter(c => c.gender === gender).sort((a, b) => a.name.localeCompare(b.name))
+        }
+    },
+
     actions: {
         setIsLoading(value: boolean) {
             this.isLoading = value
@@ -21,5 +27,13 @@ export const useCategoryStore = defineStore("category", {
             this.total = data.total
             this.metadata = data.metadata
         },
+        setActiveCount(value: boolean) {
+            this.metadata.activeCount += value ? 1 : -1
+        },
+        changeImage(id: number, img: ImageType) {
+            this.categories = this.categories.map(c =>
+                c.id === id ? { ...c, img } : c
+            )
+        }
     }
 });

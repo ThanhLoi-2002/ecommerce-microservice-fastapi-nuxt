@@ -55,14 +55,24 @@ class CategoryResponse(BaseModel):
     pid: Optional[int] = None
     description: Optional[str] = None
     status: bool
+    gender: GenderEnum
     created_at: datetime
     updated_at: datetime
     children_count: Optional[int] = 0
+    # parent: Optional[CategoryResponse] = None
+    # children: Optional[List[CategoryResponse]] = []
+    children_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+class CategoryFullResponse(CategoryResponse):
     parent: Optional[CategoryResponse] = None
+    children: Optional[List[CategoryResponse]] = []
 
     class Config:
         from_attributes = True
 
 
 class CategoryTreeResponse(CategoryResponse):
-    children: List["CategoryTreeResponse"] = []
+    children: List[CategoryTreeResponse] = []

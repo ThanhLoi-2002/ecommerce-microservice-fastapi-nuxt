@@ -1,8 +1,8 @@
 <template>
-  <button :class="class" :type="type" :disabled="isLoading">
+  <button :class="class" :type="type" :disabled="isLoading" @click="onClick">
     <span v-if="isLoading" class="d-flex align-items-center justify-content-center">
       <span class="mr-2 d-flex"><LoadingSpinner /></span>
-      {{ loadingLabel || "Loading ...." }}
+      {{ loadingLabel || "Loading" }}
     </span>
     <span v-else>
       {{ label }}
@@ -20,5 +20,6 @@ const props = defineProps<{
   type?: "button" | "submit" | "reset" | undefined;      // Loại button, mặc định là "button"
   isLoading?: boolean;  // Trạng thái loading
   class?: string;     // Class tùy chỉnh
+  onClick?: () => void
 }>();
 </script>

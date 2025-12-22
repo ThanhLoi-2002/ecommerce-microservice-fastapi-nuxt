@@ -51,7 +51,7 @@ import type { ImageType } from '@/types/common';
 import { ref } from 'vue';
 
 const props = defineProps<{
-  chooseFile: (file: any) => void
+  chooseFile: (file: File) => void
   image?: ImageType
 }>()
 

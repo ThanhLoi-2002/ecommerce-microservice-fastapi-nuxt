@@ -8,6 +8,8 @@ from app.schemas.type import PaginatedResponse, SortOrder
 from app.schemas.category import CategoryCreate, CategoryUpdate
 from slugify import slugify
 from sqlalchemy.orm import selectinload
+from app.core.cloudinary_config import cloudinary
+import cloudinary.uploader
 
 
 class CRUDCategory:
@@ -58,7 +60,7 @@ class CRUDCategory:
         if load_relations:
             for relation in load_relations:
                 if hasattr(Category, relation):
-                    query = query.options(selectinload(getattr(Category, relation)))
+                    q = q.options(selectinload(getattr(Category, relation)))
 
         res = await db.execute(q)
         return res.scalar_one_or_none()
@@ -108,8 +110,9 @@ class CRUDCategory:
             stmt = stmt.where(Category.status == status)
 
         if parent_only:
+            print(parent_only)
             stmt = stmt.where(Category.pid.is_(None))
-        
+
         if pid is not None:
             stmt = stmt.where(Category.pid == pid)
 
@@ -151,7 +154,9 @@ class CRUDCategory:
         if is_metadata:
             meta_stmt = select(
                 func.count(Category.id).label("total"),
-                func.sum(case((Category.status == True, 1), else_=0)).label("activeCount"),
+                func.sum(case((Category.status == True, 1), else_=0)).label(
+                    "activeCount"
+                ),
                 func.sum(case((Category.pid.is_(None), 1), else_=0)).label(
                     "parentCount"
                 ),
@@ -168,14 +173,16 @@ class CRUDCategory:
                 "parentCount": row.parentCount or 0,
                 "childrenCount": row.childrenCount or 0,
             }
-
+        # print(items)
+        # for item in items:
+        #     print(item.__dict__)
         return PaginatedResponse(
             items=items,
             total=total,
             page=page,
             limit=limit,
             total_pages=total_pages,
-            metadata=metadata
+            metadata=metadata,
         )
 
     # @staticmethod
@@ -196,7 +203,7 @@ class CRUDCategory:
         db: AsyncSession, id: int, category_update: CategoryUpdate
     ) -> Optional[Category]:
         """Update category"""
-        category = await CRUDCategory.get_one(db, id)
+        category = await CRUDCategory.get_one(db, {"id": id})
         if not category:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
@@ -220,19 +227,16 @@ class CRUDCategory:
     @staticmethod
     async def delete(db: AsyncSession, id: int) -> bool:
         """Delete category (soft delete by setting status to False)"""
-        category = await CRUDCategory.get_one(db, id)
+        category = await CRUDCategory.get_one(db, {"id": id})
         if not category:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Category not found"
             )
+        public_id = category.img.get("public_id") if category.img else None
 
-        # Check if category has children
-        # children_count = await (
-        #     db.query(func.count(Category.id)).filter(Category.pid == id).scalar()
-        # )
-        # if children_count > 0:
-        #     raise ValueError("Cannot delete category with children")
-
+        if public_id:
+            cloudinary.uploader.destroy(public_id)
+            
         await db.delete(category)
         await db.commit()
         return True

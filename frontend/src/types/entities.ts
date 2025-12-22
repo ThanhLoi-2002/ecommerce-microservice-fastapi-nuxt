@@ -23,4 +23,5 @@ export type CategoryType = BaseEntity & {
   status: boolean;
   children_count: number;
   parent?: CategoryType
+  children: CategoryType[]
 }

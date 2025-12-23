@@ -199,7 +199,7 @@ const changePage = (page: number) => {
 };
 
 const changeLimit = (e: any) => {
-    filters.value = { ...filters.value, limit: e.target?.value }
+    filters.value = { ...filters.value, limit: e.target?.value, page: 1 }
     getCategories(filters.value);
 };
 

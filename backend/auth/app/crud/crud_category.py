@@ -15,10 +15,10 @@ import cloudinary.uploader
 class CRUDCategory:
     @staticmethod
     async def generate_unique_slug(
-        db: AsyncSession, name: str, id: Optional[int] = None
+        db: AsyncSession, name: str, gender: str, id: Optional[int] = None
     ) -> str:
         """Generate unique slug for category"""
-        base_slug = slugify(name)
+        base_slug = slugify(f"${name} ${gender}")
         slug = base_slug
         counter = 1
 
@@ -68,7 +68,7 @@ class CRUDCategory:
     @staticmethod
     async def create(db: AsyncSession, data: CategoryCreate) -> Category:
         """Create new category"""
-        slug = await CRUDCategory.generate_unique_slug(db, data.name)
+        slug = await CRUDCategory.generate_unique_slug(db, data.name, data.gender)
 
         category = Category(
             **data.model_dump(exclude={"slug"}),
@@ -173,9 +173,7 @@ class CRUDCategory:
                 "parentCount": row.parentCount or 0,
                 "childrenCount": row.childrenCount or 0,
             }
-        # print(items)
-        # for item in items:
-        #     print(item.__dict__)
+
         return PaginatedResponse(
             items=items,
             total=total,
@@ -184,19 +182,6 @@ class CRUDCategory:
             total_pages=total_pages,
             metadata=metadata,
         )
-
-    # @staticmethod
-    # def CRUDCategory.get_one_tree(db: AsyncSession) -> List[Category]:
-    #     """Get category tree structure (parent with children)"""
-
-    #     def build_tree(parent_id: Optional[int] = None) -> List[Category]:
-    #         categories = db.query(Category).filter(Category.pid == parent_id).all()
-    #         for category in categories:
-    #             category.children = build_tree(category.id)
-    #             category.children_count = len(category.children)
-    #         return categories
-
-    #     return build_tree()
 
     @staticmethod
     async def update(
@@ -214,7 +199,7 @@ class CRUDCategory:
         # Update slug if name changed
         if "name" in update_data:
             update_data["slug"] = await CRUDCategory.generate_unique_slug(
-                db, update_data["name"], id
+                db, update_data["name"], update_data["gender"], id
             )
 
         for field, value in update_data.items():
@@ -236,7 +221,7 @@ class CRUDCategory:
 
         if public_id:
             cloudinary.uploader.destroy(public_id)
-            
+
         await db.delete(category)
         await db.commit()
         return True

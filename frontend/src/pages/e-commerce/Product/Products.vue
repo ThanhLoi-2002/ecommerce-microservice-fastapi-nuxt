@@ -17,8 +17,7 @@
 
             <div class="row">
                 <!-- Filter Sidebar - Desktop -->
-                <Filter v-model:filters="filters" v-model:showMobileFilter="showMobileFilter"
-                    :currentPage="currentPage" />
+                <Filter v-model:filters="filters" v-model:showMobileFilter="showMobileFilter" />
 
                 <!-- Main Content -->
                 <div class="col-lg-9">
@@ -44,63 +43,11 @@
 
                     <!-- Products Grid -->
                     <div class="products-grid">
-                        <div v-for="product in paginatedProducts" :key="product.id" class="product-card">
-                            <div class="product-image">
-                                <div v-if="product.isNew" class="product-badge new">
-                                    NEW
-                                </div>
-                                <div v-if="product.discount > 0" class="product-badge discount">
-                                    -{{ product.discount }}%
-                                </div>
-                                <img :src="product.image" :alt="product.name" />
-                            </div>
-
-                            <div class="product-info">
-                                <div class="product-colors">
-                                    <div v-for="(color, idx) in product.colors" :key="idx" class="product-color-dot"
-                                        :style="{ backgroundColor: colorMap[color] }" :title="color" />
-                                </div>
-
-                                <div class="product-name">{{ product.name }}</div>
-
-                                <div class="product-prices">
-                                    <span class="product-price">
-                                        {{ formatPrice(product.price) }}
-                                    </span>
-                                    <span class="product-old-price">
-                                        {{ formatPrice(product.oldPrice) }}
-                                    </span>
-                                </div>
-
-                                <div class="product-sizes">
-                                    <span v-for="size in product.sizes" :key="size" class="size-badge">
-                                        {{ size }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                        <ProductCart v-for="product in paginatedProducts" :product="product" :colorMap="colorMap" />
                     </div>
 
                     <!-- Pagination -->
-                    <div v-if="totalPages > 1" class="pagination-wrapper">
-                        <ul class="pagination-custom">
-                            <li :class="['page-item-custom', { disabled: currentPage === 1 }]"
-                                @click="changePage(currentPage - 1)">
-                                ‹
-                            </li>
-
-                            <li v-for="page in visiblePages" :key="page"
-                                :class="['page-item-custom', { active: currentPage === page }]"
-                                @click="changePage(page)">
-                                {{ page }}
-                            </li>
-
-                            <li :class="['page-item-custom', { disabled: currentPage === totalPages }]"
-                                @click="changePage(currentPage + 1)">
-                                ›
-                            </li>
-                        </ul>
-                    </div>
+                    <Pagination/>
                 </div>
             </div>
         </div>
@@ -112,6 +59,9 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from "vue-router"
 import Filter from './components/Filter.vue'
+import { productFilterDefault } from '@/utils/constants'
+import ProductCart from './components/ProductCart.vue'
+import Pagination from '@/components/user/Pagination.vue'
 
 // Types
 interface Product {
@@ -132,8 +82,9 @@ interface Product {
 interface Filters {
     sizes: string[]
     colors: string[]
+    price: number[]
     discount: string
-    materials: string[]
+    page: number
 }
 
 const route = useRoute()
@@ -156,14 +107,8 @@ const colorMap: Record<string, string> = {
 
 // State
 const allProducts = ref<Product[]>([])
-const filters = ref<Filters>({
-    sizes: [],
-    colors: [],
-    discount: '',
-    materials: []
-})
+const filters = ref<Filters>(productFilterDefault)
 const sortBy = ref<string>('default')
-const currentPage = ref<number>(1)
 const itemsPerPage = ref<number>(24)
 const showMobileFilter = ref<boolean>(false)
 
@@ -180,12 +125,6 @@ const filteredProducts = computed<Product[]>(() => {
     if (filters.value.colors.length > 0) {
         result = result.filter(p =>
             filters.value.colors.some(c => p.colors.includes(c))
-        )
-    }
-
-    if (filters.value.materials.length > 0) {
-        result = result.filter(p =>
-            filters.value.materials.includes(p.material)
         )
     }
 
@@ -217,39 +156,10 @@ const filteredProducts = computed<Product[]>(() => {
     return result
 })
 
-const totalPages = computed<number>(() => {
-    return Math.ceil(filteredProducts.value.length / itemsPerPage.value)
-})
-
 const paginatedProducts = computed<Product[]>(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value
+    const start = (filters.value.page - 1) * itemsPerPage.value
     const end = start + itemsPerPage.value
     return filteredProducts.value.slice(start, end)
-})
-
-const visiblePages = computed<number[]>(() => {
-    const pages: number[] = []
-    const maxVisible = 5
-
-    if (totalPages.value <= maxVisible) {
-        for (let i = 1; i <= totalPages.value; i++) {
-            pages.push(i)
-        }
-    } else if (currentPage.value <= 3) {
-        for (let i = 1; i <= maxVisible; i++) {
-            pages.push(i)
-        }
-    } else if (currentPage.value >= totalPages.value - 2) {
-        for (let i = totalPages.value - maxVisible + 1; i <= totalPages.value; i++) {
-            pages.push(i)
-        }
-    } else {
-        for (let i = currentPage.value - 2; i <= currentPage.value + 2; i++) {
-            pages.push(i)
-        }
-    }
-
-    return pages
 })
 
 // Methods
@@ -290,21 +200,10 @@ const generateProducts = (): void => {
     }))
 }
 
-const changePage = (page: number): void => {
-    if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-}
-
-const formatPrice = (price: number): string => {
-    return price.toLocaleString('vi-VN') + 'đ'
-}
-
 // Watchers
-watch(filters, () => {
-    currentPage.value = 1
-}, { deep: true })
+// watch(filters, () => {
+//     currentPage.value = 1
+// }, { deep: true })
 
 // Lifecycle
 onMounted(() => {
@@ -314,7 +213,6 @@ onMounted(() => {
 
 <style scoped>
 .ivymoda-container {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     background: #f8f9fa;
     min-height: 100vh;
     padding: 20px 0;
@@ -391,169 +289,6 @@ onMounted(() => {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     margin-bottom: 30px;
-}
-
-.product-card {
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s;
-    cursor: pointer;
-}
-
-.product-card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-4px);
-}
-
-.product-image {
-    position: relative;
-    padding-top: 133%;
-    overflow: hidden;
-    background: #f5f5f5;
-}
-
-.product-image img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-}
-
-.product-card:hover .product-image img {
-    transform: scale(1.05);
-}
-
-.product-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #000;
-    color: white;
-    padding: 5px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    border-radius: 3px;
-    z-index: 1;
-}
-
-.product-badge.new {
-    background: #FF4444;
-}
-
-.product-badge.discount {
-    background: #FF6B35;
-    top: 10px;
-    right: 10px;
-    left: auto;
-}
-
-.product-info {
-    padding: 15px;
-}
-
-.product-colors {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 10px;
-}
-
-.product-color-dot {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    border: 1px solid #ddd;
-}
-
-.product-name {
-    font-size: 15px;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: #333;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.4;
-    min-height: 42px;
-}
-
-.product-prices {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.product-price {
-    font-size: 18px;
-    font-weight: 700;
-    color: #FF4444;
-}
-
-.product-old-price {
-    font-size: 14px;
-    color: #999;
-    text-decoration: line-through;
-}
-
-.product-sizes {
-    display: flex;
-    gap: 5px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-}
-
-.size-badge {
-    padding: 3px 8px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-size: 11px;
-    color: #666;
-}
-
-.pagination-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 40px;
-}
-
-.pagination-custom {
-    display: flex;
-    gap: 5px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.page-item-custom {
-    cursor: pointer;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    background: white;
-    color: #333;
-    border-radius: 4px;
-    transition: all 0.3s;
-    font-size: 14px;
-    user-select: none;
-}
-
-.page-item-custom:hover:not(.disabled):not(.active) {
-    background: #f5f5f5;
-}
-
-.page-item-custom.active {
-    background: #000;
-    color: white;
-    border-color: #000;
-}
-
-.page-item-custom.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 @media (max-width: 768px) {

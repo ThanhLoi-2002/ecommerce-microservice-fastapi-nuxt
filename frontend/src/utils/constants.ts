@@ -6,10 +6,10 @@ export const REFRESH_TOKEN = "refresh_token";
 export const DEFAULT_AVATAR = 'https://i.pravatar.cc/150?img=12'
 
 export const genderOptions: OptionType[] = [
-    {value: GenderEnum.MALE, label: 'Nam'},
-    {value: GenderEnum.FEMALE, label: 'Nữ'},
-    {value: GenderEnum.BOTH, label: 'Cả hai'},
-] 
+    { value: GenderEnum.MALE, label: 'Nam' },
+    { value: GenderEnum.FEMALE, label: 'Nữ' },
+    { value: GenderEnum.BOTH, label: 'Cả hai' },
+]
 
 export const paginationDefault: PaginationType = {
     items: [],
@@ -29,4 +29,14 @@ export const categoryFilterDefault: CategoryFilter = {
     sortOrder: undefined,
     status: undefined,
     is_metadata: false
+}
+
+export const PRICE_MIN = 0
+export const PRICE_MAX = 50000000
+export const productFilterDefault = {
+    sizes: [],
+    colors: [],
+    price: [PRICE_MIN, PRICE_MAX],
+    discount: '',
+    page: 1
 }

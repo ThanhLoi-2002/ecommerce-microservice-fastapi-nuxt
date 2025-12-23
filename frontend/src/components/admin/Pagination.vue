@@ -22,7 +22,7 @@
                     <a class="page-link" href="#" @click.prevent="changePage(page - 1)">‹</a>
                 </li>
                 <li v-for="p in displayPages" :key="p" class="page-item" :class="{ active: p === page }">
-                    <a class="page-link" href="#">{{ p }}</a>
+                    <a class="page-link" href="#" @click.prevent="p === page ? null : changePage(p)">{{ p }}</a>
                 </li>
                 <li class="page-item" :class="{ disabled: page === total_pages || total == 0 }">
                     <a class="page-link" href="#" @click.prevent="changePage(page + 1)">›</a>

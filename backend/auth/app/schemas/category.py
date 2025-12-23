@@ -43,7 +43,7 @@ class FilterCategories(PaginationParams, BaseFilter):
             limit,
             sortBy,
             sortOrder,
-            self.is_metadata
+            self.is_metadata,
         )
 
 
@@ -59,12 +59,11 @@ class CategoryResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     children_count: Optional[int] = 0
-    # parent: Optional[CategoryResponse] = None
-    # children: Optional[List[CategoryResponse]] = []
     children_count: int = 0
 
     class Config:
         from_attributes = True
+
 
 class CategoryFullResponse(CategoryResponse):
     parent: Optional[CategoryResponse] = None
@@ -72,7 +71,3 @@ class CategoryFullResponse(CategoryResponse):
 
     class Config:
         from_attributes = True
-
-
-class CategoryTreeResponse(CategoryResponse):
-    children: List[CategoryTreeResponse] = []

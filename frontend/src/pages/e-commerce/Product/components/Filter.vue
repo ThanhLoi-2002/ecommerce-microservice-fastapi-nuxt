@@ -7,50 +7,99 @@
 
             <!-- Size Filter -->
             <div class="filter-section">
-                <h6 class="filter-title">Size</h6>
-                <div class="filter-options">
-                    <Tag v-for="size in filterOptions.sizes" :label="size" />
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Size</h6>
+                    <i class="pi" :class="showItems.size ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.size = !showItems.size" />
                 </div>
+                <transition name="collapse">
+                    <div class="filter-options pb-3" v-show="showItems.size">
+                        <Tag v-for="size in filterOptions.sizes" :label="size" :onClick="() => toggleSize(size)"
+                            :class="filters.sizes.includes(size) ? 'active' : ''" />
+                    </div>
+                </transition>
             </div>
 
             <!-- Color Filter -->
             <div class="filter-section">
-                <h6 class="filter-title">Màu sắc</h6>
-                <div class="color-options">
-                    <div v-for="color in filterOptions.colors" :key="color"
-                        :class="['color-item', { selected: filters.colors.includes(color) }]"
-                        @click="toggleColor(color)" :title="color">
-                        <div class="color-box" :style="{
-                            backgroundColor: colorMap[color],
-                            border: color == 'Trắng' ? '1px solid black' : 'none'
-                        }">
-                            <i class="pi pi-check d-flex justify-content-center align-items-center h-100"
-                                :class="color == 'Trắng' ? 'text-black' : 'text-white'" style="font-size: 0.7em"></i>
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Màu sắc</h6>
+                    <i class="pi" :class="showItems.color ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.color = !showItems.color" />
+                </div>
+                <transition name="collapse">
+                    <div class="color-options pb-3" v-show="showItems.color">
+                        <div v-for="color in filterOptions.colors" :key="color" :class="'color-item'"
+                            @click="toggleColor(color)" :title="color">
+                            <div class="color-box" :style="{
+                                backgroundColor: colorMap[color],
+                                border: color == 'Trắng' ? '1px solid black' : 'none'
+                            }">
+                                <i v-if="filters.colors.includes(color)"
+                                    class="pi pi-check d-flex justify-content-center align-items-center h-100"
+                                    :class="color == 'Trắng' ? 'text-black' : 'text-white'"
+                                    style="font-size: 0.7em"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </transition>
             </div>
+
+            <!-- Price Filter -->
+            <div class="filter-section">
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Mức giá</h6>
+                    <i class="pi" :class="showItems.price ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.price = !showItems.price" />
+                </div>
+
+                <transition name="collapse">
+                    <div v-show="showItems.price" class="">
+                        <!-- Range slider container -->
+                        <div class="range-slider">
+                            <div class="slider-track"></div>
+                            <div class="slider-range" :style="rangeStyle"></div>
+
+                            <input type="range" :min="PRICE_MIN" :max="PRICE_MAX" :step="step"
+                                v-model.number="filters.price[0]!" @input="handleMinChange" class="slider-input" />
+                            <input type="range" :min="PRICE_MIN" :max="PRICE_MAX" :step="step"
+                                v-model.number="filters.price[1]!" @input="handleMaxChange" class="slider-input" />
+
+                            <!-- Price labels below thumbs -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="mt-3">
+                                    {{ formatPrice(filters.price[0]!) }}
+                                </div>
+                                <div class="mt-3">
+                                    {{ formatPrice(filters.price[1]!) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </transition>
+            </div>
+
 
             <!-- Discount Filter -->
             <div class="filter-section">
-                <h6 class="filter-title">Mức chiết khấu</h6>
-                <div class="filter-options">
-                    <label v-for="disc in filterOptions.discounts" :key="disc.value" class="filter-checkbox">
-                        <input type="radio" name="discount" :value="disc.value" v-model="filters.discount" />
-                        <span>{{ disc.label }}</span>
-                    </label>
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Mức chiết khấu</h6>
+                    <i class="pi" :class="showItems.discount ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.discount = !showItems.discount" />
                 </div>
-            </div>
 
-            <!-- Material Filter -->
-            <div class="filter-section">
-                <h6 class="filter-title">Chất liệu</h6>
-                <div class="filter-options">
-                    <label v-for="mat in filterOptions.materials" :key="mat" class="filter-checkbox">
-                        <input type="checkbox" :value="mat" v-model="filters.materials" />
-                        <span>{{ mat }}</span>
-                    </label>
-                </div>
+                <transition name="collapse">
+                    <div class="pb-3" v-show="showItems.discount" style="gap: 8px">
+                        <label v-for="disc in filterOptions.discounts" :key="disc.value"
+                            class="filter-checkbox custom-radio">
+                            <input type="checkbox" :checked="filters.discount === disc.value"
+                                @change="toggleDiscount(disc.value)" />
+                            <span class="radio-ui"></span>
+                            <span class="label-text">{{ disc.label }}</span>
+                        </label>
+                    </div>
+                </transition>
             </div>
 
             <div class="filter-actions">
@@ -60,6 +109,8 @@
             </div>
         </aside>
     </div>
+
+    <!-- Mobile -->
     <Teleport to="body">
         <div v-if="showMobileFilter" class="mobile-filter-overlay mt-5 d-lg-none">
             <div class="filter-header mt-1">
@@ -71,45 +122,86 @@
 
             <!-- Size Filter -->
             <div class="filter-section">
-                <h6 class="filter-title">Size</h6>
-                <div class="filter-options">
-                    <Tag v-for="size in filterOptions.sizes" :label="size" />
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Size</h6>
+                    <i class="pi" :class="showItems.size ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.size = !showItems.size" />
                 </div>
+                <transition name="collapse">
+                    <div class="filter-options pb-3" v-show="showItems.size">
+                        <Tag v-for="size in filterOptions.sizes" :label="size" :onClick="() => toggleSize(size)"
+                            :class="filters.sizes.includes(size) ? 'active' : ''" />
+                    </div>
+                </transition>
             </div>
 
             <!-- Color Filter -->
             <div class="filter-section">
-                <h6 class="filter-title">Màu sắc</h6>
-                <div class="color-options">
-                    <div v-for="color in filterOptions.colors" :key="color"
-                        :class="['color-item', { selected: filters.colors.includes(color) }]"
-                        @click="toggleColor(color)" :title="color">
-                        <div class="color-box" :style="{
-                            backgroundColor: colorMap[color],
-                            border: color === 'Trắng' ? '1px solid #ddd' : 'none'
-                        }" />
-                    </div>
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Màu sắc</h6>
+                    <i class="pi" :class="showItems.color ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.color = !showItems.color" />
                 </div>
+                <transition name="collapse">
+                    <div class="color-options pb-3" v-show="showItems.color">
+                        <div v-for="color in filterOptions.colors" :key="color" :class="'color-item'"
+                            @click="toggleColor(color)" :title="color">
+                            <div class="color-box" :style="{
+                                backgroundColor: colorMap[color],
+                                border: color == 'Trắng' ? '1px solid black' : 'none'
+                            }">
+                                <i v-if="filters.colors.includes(color)"
+                                    class="pi pi-check d-flex justify-content-center align-items-center h-100"
+                                    :class="color == 'Trắng' ? 'text-black' : 'text-white'"
+                                    style="font-size: 0.7em"></i>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="filter-section">
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Mức giá</h6>
+                    <i class="pi" :class="showItems.price ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.price = !showItems.price" />
+                </div>
+
+                <transition name="collapse">
+                    <div v-show="showItems.price" class="">
+                        <!-- Range slider container -->
+                        <div class="range-slider">
+                            <div class="slider-track"></div>
+                            <div class="slider-range" :style="rangeStyle"></div>
+
+                            <input type="range" :min="PRICE_MIN" :max="PRICE_MAX" :step="step"
+                                v-model.number="filters.price[0]!" @input="handleMinChange" class="slider-input" />
+                            <input type="range" :min="PRICE_MIN" :max="PRICE_MAX" :step="step"
+                                v-model.number="filters.price[1]!" @input="handleMaxChange" class="slider-input" />
+
+                            <!-- Price labels below thumbs -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="mt-3">
+                                    {{ formatPrice(filters.price[0]!) }}
+                                </div>
+                                <div class="mt-3">
+                                    {{ formatPrice(filters.price[1]!) }}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </transition>
             </div>
 
             <!-- Discount Filter -->
             <div class="filter-section">
                 <h6 class="filter-title">Mức chiết khấu</h6>
-                <div class="filter-options">
+                <div class="filter-options pb-3">
                     <label v-for="disc in filterOptions.discounts" :key="disc.value" class="filter-checkbox">
                         <input type="radio" name="discount-mobile" :value="disc.value" v-model="filters.discount" />
                         <span>{{ disc.label }}</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Material Filter -->
-            <div class="filter-section">
-                <h6 class="filter-title">Chất liệu</h6>
-                <div class="filter-options">
-                    <label v-for="mat in filterOptions.materials" :key="mat" class="filter-checkbox">
-                        <input type="checkbox" :value="mat" v-model="filters.materials" />
-                        <span>{{ mat }}</span>
                     </label>
                 </div>
             </div>
@@ -125,13 +217,15 @@
         </div>
     </Teleport>
 </template>
+
 <script setup lang="ts">
 import Tag from '@/components/user/Tag.vue';
+import { PRICE_MAX, PRICE_MIN, productFilterDefault } from '@/utils/constants';
+import { formatPrice } from '@/utils/format';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
-    filters: Filters,
-    currentPage: number
+    filters: Filters
     showMobileFilter: boolean
 }>()
 
@@ -153,8 +247,8 @@ const localShowMobileFilter = computed({
 interface Filters {
     sizes: string[]
     colors: string[]
+    price: number[]
     discount: string
-    materials: string[]
 }
 
 interface DiscountOption {
@@ -187,7 +281,28 @@ const filterOptions = {
         { label: 'Từ 70%', value: '70-100' },
         { label: 'Giá đặc biệt', value: 'special' }
     ] as DiscountOption[],
-    materials: ['Cotton', 'Lụa', 'Tencel', 'Chiffon', 'Linen', 'Denim', 'Khaki', 'Voan']
+}
+
+const showItems = ref<any>({
+    size: false,
+    clolor: false,
+    price: false,
+    discount: false
+})
+const toggleSize = (size: string) => {
+    const sizes = [...localFilters.value.sizes]
+
+    const index = sizes.indexOf(size)
+    if (index > -1) {
+        sizes.splice(index, 1)
+    } else {
+        sizes.push(size)
+    }
+
+    localFilters.value = {
+        ...localFilters.value,
+        sizes
+    }
 }
 
 const toggleColor = (color: string) => {
@@ -206,18 +321,46 @@ const toggleColor = (color: string) => {
     }
 }
 
-const clearFilters = () => {
-    localFilters.value = {
-        sizes: [],
-        colors: [],
-        discount: '',
-        materials: []
+const toggleDiscount = (value: string) => {
+    if (localFilters.value.discount === value) {
+        // click lại → bỏ chọn
+        localFilters.value.discount = ''
+    } else {
+        // chọn mới → tự động bỏ cái cũ
+        localFilters.value.discount = value
     }
-
-    localShowMobileFilter.value = false
 }
 
+const step = ref(100000);
+
+const handleMinChange = (e: any) => {
+    localFilters.value.price[0] = e.target.value
+};
+
+const handleMaxChange = (e: any) => {
+    localFilters.value.price[1] = e.target.value
+};
+
+const getPercent = (value: number): number => {
+    return ((value - PRICE_MIN) / (PRICE_MAX - PRICE_MIN)) * 100;
+};
+
+const rangeStyle = computed(() => {
+    const minPercent = getPercent(localFilters.value.price[0]!);
+    const maxPercent = getPercent(localFilters.value.price[1]!);
+
+    return {
+        left: `${minPercent}%`,
+        width: `${maxPercent - minPercent}%`
+    };
+});
+
+const clearFilters = () => {
+    localFilters.value = productFilterDefault
+    localShowMobileFilter.value = false
+}
 </script>
+
 <style>
 .filter-sidebar {
     background: white;
@@ -245,7 +388,6 @@ const clearFilters = () => {
 
 .filter-section {
     margin-bottom: 25px;
-    padding-bottom: 20px;
     border-bottom: 1px solid #f0f0f0;
 }
 
@@ -294,10 +436,6 @@ const clearFilters = () => {
     transition: all 0.3s;
 }
 
-.color-item.selected {
-    border-color: #000;
-}
-
 .color-box {
     width: 20px;
     height: 20px;
@@ -324,5 +462,135 @@ const clearFilters = () => {
     .filter-sidebar:not(.mobile-filter-overlay) {
         display: none;
     }
+}
+
+/* Collapse animation */
+.collapse-enter-active,
+.collapse-leave-active {
+    transition: all 0.5s ease;
+}
+
+.collapse-enter-from,
+.collapse-leave-to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-4px);
+}
+
+.collapse-enter-to,
+.collapse-leave-from {
+    opacity: 1;
+    max-height: 200px;
+    /* chỉnh lớn hơn nội dung */
+    transform: translateY(0);
+}
+
+.range-slider {
+    position: relative;
+    height: 50px;
+    margin-top: 15px;
+}
+
+.slider-track {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 4px;
+}
+
+.slider-range {
+    position: absolute;
+    top: 0;
+    height: 4px;
+    background: #333;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.slider-input {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    background: none;
+    pointer-events: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    z-index: 2;
+}
+
+.slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #333;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: all;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.slider-input::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #333;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: all;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+    background: #000;
+    transform: scale(1.15);
+}
+
+.slider-input::-moz-range-thumb:hover {
+    background: #000;
+    transform: scale(1.15);
+}
+
+.pi {
+    cursor: pointer;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 8px;
+    user-select: none;
+}
+
+/* Ẩn checkbox gốc */
+.filter-checkbox input {
+    display: none;
+}
+
+/* Vòng tròn */
+.radio-ui {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    position: relative;
+}
+
+/* Chấm đen khi active */
+.filter-checkbox input:checked+.radio-ui::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>

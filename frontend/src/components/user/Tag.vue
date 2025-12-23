@@ -1,5 +1,5 @@
 <template>
-    <span class="tag">
+    <span class="tag" :class="class" @click="onClick">
         {{ label }}
     </span>
 </template>
@@ -7,6 +7,7 @@
 const props = defineProps<{
     label: string
     onClick?: () => void
+    class?: string
 }>()
 </script>
 <style>
@@ -23,5 +24,9 @@ const props = defineProps<{
 
 .tag:hover {
     border: 1px solid rgb(0, 0, 0, 0.3);
+}
+
+.tag.active {
+    border: 1px solid rgb(0, 0, 0);
 }
 </style>

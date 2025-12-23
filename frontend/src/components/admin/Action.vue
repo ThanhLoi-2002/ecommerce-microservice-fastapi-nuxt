@@ -1,7 +1,7 @@
 <template>
     <div class="card-header bg-white">
         <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Danh sách Thể loại Sản phẩm</h5>
+            <h5 class="mb-0"></h5>
             <button class="btn btn-primary" @click="props.onClick">
                 ➕ {{ props.label }}
             </button>

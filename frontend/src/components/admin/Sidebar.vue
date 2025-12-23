@@ -33,6 +33,7 @@ const menu = [
     { label: "Orders", to: "/dashboard/orders", icon: 'pi-box' },
     { label: "Customers", to: "/dashboard/customers", icon: 'pi-user' },
     { label: "Sizes", to: "/dashboard/sizes", icon: 'pi-mobile' },
+    { label: "Colors", to: "/dashboard/colors", icon: 'pi-palette' },
 ];
 
 // refs

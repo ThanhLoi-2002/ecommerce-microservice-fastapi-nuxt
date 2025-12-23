@@ -86,6 +86,11 @@ const routes = [
         name: "admin-sizes",
         component: () => import('../pages/admin/Size/SizeList.vue')
       },
+      {
+        path: "colors",
+        name: "admin-colors",
+        component: () => import('../pages/admin/Color/ColorList.vue')
+      },
     ]
   },
 
@@ -137,6 +142,11 @@ router.beforeEach(async (to) => {
   // 4. Safety: admin path but not admin
   if (to.path.startsWith("/dashboard") && user.value?.role !== RoleEnum.ADMIN) {
     return { name: "home" };
+  }
+
+  // 5. Safety: user path but not user
+  if (to.path == "/" && user.value?.role == RoleEnum.ADMIN) {
+    return { name: "admin-statistics" };
   }
 });
 

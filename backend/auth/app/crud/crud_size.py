@@ -14,15 +14,15 @@ class CRUDSize:
         filters: dict,
         exclude_id: Optional[int] = None,
     ) -> Size | None:
-        stmt = select(Size)
+        q = select(Size)
         for field, value in filters.items():
             if hasattr(Size, field) and value is not None:
-                stmt = stmt.where(getattr(Size, field) == value)
+                q = q.where(getattr(Size, field) == value)
 
         if exclude_id is not None:
-            stmt = stmt.where(Size.id != exclude_id)
+            q = q.where(Size.id != exclude_id)
 
-        result = await db.execute(stmt)
+        result = await db.execute(q)
         return result.scalar_one_or_none()
     
     @staticmethod

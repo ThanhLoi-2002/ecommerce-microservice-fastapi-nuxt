@@ -29,16 +29,15 @@
                 </div>
                 <transition name="collapse">
                     <div class="color-options pb-3" v-show="showItems.color">
-                        <div v-for="color in filterOptions.colors" :key="color" :class="'color-item'"
+                        <div v-for="color in filterOptions.colors" :key="color.id" :class="'color-item'"
                             @click="toggleColor(color)" :title="color">
                             <div class="color-box" :style="{
-                                backgroundColor: colorMap[color],
-                                border: color == 'Trắng' ? '1px solid black' : 'none'
+                                backgroundColor: color.code,
+                                border: color.name == 'Trắng' ? '1px solid black' : 'none'
                             }">
                                 <i v-if="filters.colors.includes(color)"
                                     class="pi pi-check d-flex justify-content-center align-items-center h-100"
-                                    :class="color == 'Trắng' ? 'text-black' : 'text-white'"
-                                    style="font-size: 0.7em"></i>
+                                    :class="color.name == 'Trắng' ? 'text-black' : 'text-white'" style="font-size: 0.7em" />
                             </div>
                         </div>
                     </div>
@@ -230,9 +229,11 @@
 
 <script setup lang="ts">
 import Tag from '@/components/user/Tag.vue';
+import { useColor } from '@/composables/useColor';
 import { useSize } from '@/composables/useSize';
+import { useColorStore } from '@/stores/color.store';
 import { useSizeStore } from '@/stores/size.store';
-import { PRICE_MAX, PRICE_MIN, productFilterDefault } from '@/utils/constants';
+import { PRICE_MAX, PRICE_MIN } from '@/utils/constants';
 import { formatPrice } from '@/utils/format';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
@@ -287,7 +288,7 @@ const colorMap: Record<string, string> = {
 
 const filterOptions = ref<any>({
     sizes: [],
-    colors: ['Đen', 'Trắng', 'Xanh dương', 'Vàng', 'Hồng', 'Đỏ', 'Xám', 'Be', 'Nâu', 'Xanh lá', 'Cam', 'Tím'],
+    colors: [],
     discounts: [
         { label: 'Dưới 30%', value: '0-30' },
         { label: 'Từ 30% - 50%', value: '30-50' },
@@ -306,14 +307,22 @@ const showItems = ref<any>({
 
 const sizeStore = useSizeStore()
 const { sizes } = storeToRefs(sizeStore)
+const colorStore = useColorStore()
+const { colors } = storeToRefs(colorStore)
 const { getSizes } = useSize()
+const { getColors } = useColor()
 
 // Theo dõi sự thay đổi trong sizes
 watch(sizes, (newSizes) => {
     filterOptions.value.sizes = newSizes.map(s => s.name);
 }, { immediate: true }); // Chạy ngay khi component được khởi tạo
 
+watch(colors, (newColors) => {
+    filterOptions.value.colors = newColors;
+}, { immediate: true }); // Chạy ngay khi component được khởi tạo
+
 getSizes();
+getColors()
 
 const toggleSize = (size: string) => {
     const sizes = [...localFilters.value.sizes]

@@ -30,7 +30,7 @@ const routes = [
   // -------------------- USER ROUTES --------------------
   {
     path: "",
-    meta: { role: RoleEnum.USER, layout: 'default' },
+    meta: { layout: 'default' },
     children: [
       {
         path: "/",
@@ -81,6 +81,11 @@ const routes = [
         name: "admin-customers",
         component: () => import('../pages/admin/User/UserList.vue')
       },
+      {
+        path: "sizes",
+        name: "admin-sizes",
+        component: () => import('../pages/admin/Size/SizeList.vue')
+      },
     ]
   },
 
@@ -112,7 +117,6 @@ router.beforeEach(async (to) => {
 
   // 1. Guest only (signin/signup)
   if (to.meta.guestOnly && isAuth.value) {
-    console.log("kick")
     return { name: "home" };
   }
 

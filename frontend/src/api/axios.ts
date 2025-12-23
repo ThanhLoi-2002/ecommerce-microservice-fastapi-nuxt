@@ -21,9 +21,9 @@ instance.interceptors.request.use(
     async function (config: any) {
         let accessToken = getToken();
 
-        if (accessToken) {
+        if (accessToken)
             config.headers["Authorization"] = accessToken
-        }
+
 
         return config;
     },
@@ -83,6 +83,7 @@ instance.interceptors.response.use(
                 queue = [];
                 removeToken()
                 window.location.href = '/'
+                console.log(err)
                 return Promise.reject(err);
             }
         }

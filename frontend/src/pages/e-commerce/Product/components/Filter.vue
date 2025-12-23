@@ -197,13 +197,23 @@
 
             <!-- Discount Filter -->
             <div class="filter-section">
-                <h6 class="filter-title">Mức chiết khấu</h6>
-                <div class="filter-options pb-3">
-                    <label v-for="disc in filterOptions.discounts" :key="disc.value" class="filter-checkbox">
-                        <input type="radio" name="discount-mobile" :value="disc.value" v-model="filters.discount" />
-                        <span>{{ disc.label }}</span>
-                    </label>
+                <div class="d-flex justify-content-between">
+                    <h6 class="filter-title">Mức chiết khấu</h6>
+                    <i class="pi" :class="showItems.discount ? 'pi-minus' : 'pi-plus'"
+                        @click="showItems.discount = !showItems.discount" />
                 </div>
+
+                <transition name="collapse">
+                    <div class="pb-3" v-show="showItems.discount" style="gap: 8px">
+                        <label v-for="disc in filterOptions.discounts" :key="disc.value"
+                            class="filter-checkbox custom-radio">
+                            <input type="checkbox" :checked="filters.discount === disc.value"
+                                @change="toggleDiscount(disc.value)" />
+                            <span class="radio-ui"></span>
+                            <span class="label-text">{{ disc.label }}</span>
+                        </label>
+                    </div>
+                </transition>
             </div>
 
             <div class="filter-actions">
@@ -220,9 +230,12 @@
 
 <script setup lang="ts">
 import Tag from '@/components/user/Tag.vue';
+import { useSize } from '@/composables/useSize';
+import { useSizeStore } from '@/stores/size.store';
 import { PRICE_MAX, PRICE_MIN, productFilterDefault } from '@/utils/constants';
 import { formatPrice } from '@/utils/format';
-import { computed, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
     filters: Filters
@@ -249,6 +262,7 @@ interface Filters {
     colors: string[]
     price: number[]
     discount: string
+    page: number
 }
 
 interface DiscountOption {
@@ -271,8 +285,8 @@ const colorMap: Record<string, string> = {
     'Tím': '#9370DB'
 }
 
-const filterOptions = {
-    sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+const filterOptions = ref<any>({
+    sizes: [],
     colors: ['Đen', 'Trắng', 'Xanh dương', 'Vàng', 'Hồng', 'Đỏ', 'Xám', 'Be', 'Nâu', 'Xanh lá', 'Cam', 'Tím'],
     discounts: [
         { label: 'Dưới 30%', value: '0-30' },
@@ -281,7 +295,7 @@ const filterOptions = {
         { label: 'Từ 70%', value: '70-100' },
         { label: 'Giá đặc biệt', value: 'special' }
     ] as DiscountOption[],
-}
+})
 
 const showItems = ref<any>({
     size: false,
@@ -289,6 +303,18 @@ const showItems = ref<any>({
     price: false,
     discount: false
 })
+
+const sizeStore = useSizeStore()
+const { sizes } = storeToRefs(sizeStore)
+const { getSizes } = useSize()
+
+// Theo dõi sự thay đổi trong sizes
+watch(sizes, (newSizes) => {
+    filterOptions.value.sizes = newSizes.map(s => s.name);
+}, { immediate: true }); // Chạy ngay khi component được khởi tạo
+
+getSizes();
+
 const toggleSize = (size: string) => {
     const sizes = [...localFilters.value.sizes]
 
@@ -356,7 +382,13 @@ const rangeStyle = computed(() => {
 });
 
 const clearFilters = () => {
-    localFilters.value = productFilterDefault
+    localFilters.value = {
+        sizes: [],
+        colors: [],
+        price: [PRICE_MIN, PRICE_MAX],
+        discount: '',
+        page: 1
+    }
     localShowMobileFilter.value = false
 }
 </script>

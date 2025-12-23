@@ -110,7 +110,6 @@ class CRUDCategory:
             stmt = stmt.where(Category.status == status)
 
         if parent_only:
-            print(parent_only)
             stmt = stmt.where(Category.pid.is_(None))
 
         if pid is not None:

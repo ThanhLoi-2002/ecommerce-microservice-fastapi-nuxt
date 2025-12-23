@@ -25,3 +25,12 @@ export type CategoryType = BaseEntity & {
   parent?: CategoryType
   children: CategoryType[]
 }
+
+export type SizeType = BaseEntity & {
+  name: string
+}
+
+export type ColorType = BaseEntity & {
+  name: string
+  code: string
+}

@@ -103,7 +103,6 @@
                                         <td style="text-align: center;"><img v-if="category.img" :src="category.img.url"
                                                 :alt="category.name" class="category-img me-2" /></td>
                                         <td><strong>{{ category.name }}</strong> ({{ category.gender }})</td>
-                                        <!-- <td><small class="text-muted">{{ category.description }}</small></td> -->
                                         <td>
                                             <span v-if="category.pid" class="badge badge-info">
                                                 {{ category.parent?.name }} ({{ category.parent?.gender }})

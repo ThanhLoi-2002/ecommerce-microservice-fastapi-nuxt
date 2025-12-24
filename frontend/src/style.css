@@ -75,5 +75,9 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .gap-3 {
-  gap: 1.5rem
+  gap: 1.5rem !important
+}
+
+.btn:focus, .form-control:focus{
+    box-shadow: none;
 }

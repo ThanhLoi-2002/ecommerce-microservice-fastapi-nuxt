@@ -47,7 +47,8 @@
 
                                             <div class="d-flex flex-column align-items-end gap-1">
                                                 <span v-if="category.pid" class="badge badge-info">
-                                                    {{ category.parent?.name }} ({{ categoryGender(category.parent?.gender) }})
+                                                    {{ category.parent?.name }} ({{
+                                                    categoryGender(category.parent?.gender) }})
                                                 </span>
                                                 <span v-else class="badge badge-secondary">Danh mục gốc</span>
                                                 <Switch v-model="category.status"
@@ -102,10 +103,12 @@
                                         <td>{{ (filters.page - 1) * filters.limit + index + 1 }}</td>
                                         <td style="text-align: center;"><img v-if="category.img" :src="category.img.url"
                                                 :alt="category.name" class="category-img me-2" /></td>
-                                        <td><strong>{{ category.name }}</strong> ({{ category.gender }})</td>
+                                        <td><strong>{{ category.name }}</strong> ({{ categoryGender(category.gender) }})
+                                        </td>
                                         <td>
                                             <span v-if="category.pid" class="badge badge-info">
-                                                {{ category.parent?.name }} ({{ category.parent?.gender }})
+                                                {{ category.parent?.name }} ({{ categoryGender(category.parent?.gender)
+                                                }})
                                             </span>
                                             <span v-else class="badge badge-secondary">Danh mục gốc</span>
                                         </td>
@@ -146,7 +149,7 @@
 
         <!-- Modal Danh mục con -->
         <Modal :open="childModalVisible" title="📂 Danh mục con" :closeModal="() => childModalVisible = false">
-            <CategoryChildren :category="selectedCategory"/>
+            <CategoryChildren :category="selectedCategory" />
         </Modal>
     </div>
 </template>

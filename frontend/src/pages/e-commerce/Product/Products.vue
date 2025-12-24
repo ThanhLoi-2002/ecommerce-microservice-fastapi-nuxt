@@ -14,7 +14,14 @@
             <div class="page-header">
                 <h2>Áo Sơ Mi Nữ</h2>
             </div>
+            <!-- <div>
+                <div v-for="p in list.slice(0, visibleCount)" :key="p.id">
+                    {{ p.name }}
+                </div>
+            </div>
 
+
+            <div ref="loadMore"></div> -->
             <div class="row">
                 <!-- Filter Sidebar - Desktop -->
                 <Filter v-model:filters="filters" v-model:showMobileFilter="showMobileFilter" />
@@ -47,7 +54,7 @@
                     </div>
 
                     <!-- Pagination -->
-                    <Pagination/>
+                    <Pagination />
                 </div>
             </div>
         </div>
@@ -204,10 +211,24 @@ const generateProducts = (): void => {
 // watch(filters, () => {
 //     currentPage.value = 1
 // }, { deep: true })
-
+// const loadMore = ref<any>(null);
+// const visibleCount = ref(20);
+// const list = ref<any>([]);
 // Lifecycle
 onMounted(() => {
     generateProducts()
+
+    // list.value = Array.from({ length: 300 }, (_, i) => ({
+    //     id: i,
+    //     name: "Product " + i
+    // }));
+
+    // const observer = new IntersectionObserver(([e]) => {
+    //     console.log(e)
+    //     if (e?.isIntersecting) visibleCount.value += 20;
+    // });
+
+    // observer.observe(loadMore.value);
 })
 </script>
 

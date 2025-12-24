@@ -153,7 +153,7 @@
                                     <h4>Tìm kiếm nhiều nhất</h4>
                                 </div>
                                 <div class="suggestions-tags">
-                                    <Tag v-for="tag in popularSearches" :label="tag"/>
+                                    <Tag v-for="tag in popularSearches" :label="tag" />
                                 </div>
                                 <div class="suggestions-divider"></div>
                                 <ul class="suggestions-list">
@@ -216,10 +216,11 @@
                         </button>
 
                         <!-- Cart -->
-                        <router-link to="/cart" class="position-relative rounded-circle border p-2 d-flex">
+                        <!-- <router-link to="/cart" class="position-relative rounded-circle border p-2 d-flex">
                             <i class="pi pi-shopping-cart" style="font-size: 20px;" />
                             <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
-                        </router-link>
+                        </router-link> -->
+                        <CartDrawerButton/>
                     </div>
                 </div>
             </div>
@@ -243,10 +244,7 @@
                     <button class="btn btn-link p-0 text-dark" @click="showMobileSearch = true">
                         <i class="pi pi-search" style="font-size: 20px;"></i>
                     </button>
-                    <router-link to="/cart" class="position-relative text-dark">
-                        <i class="pi pi-shopping-cart" style="font-size: 20px;" />
-                        <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
-                    </router-link>
+                    <CartDrawerButton/>
                 </div>
             </div>
         </div>
@@ -267,7 +265,7 @@
                         <div class="mb-3">
                             <h6 class="text-muted mb-2">Tìm kiếm nhiều nhất</h6>
                             <div class="d-flex flex-wrap gap-2">
-                                <Tag v-for="tag in popularSearches" :label="tag"/>
+                                <Tag v-for="tag in popularSearches" :label="tag" />
                             </div>
                         </div>
 
@@ -420,6 +418,7 @@ import { useCategory } from '@/composables/useCategory';
 import { useCategoryStore } from '@/stores/category.store';
 import { GenderEnum } from '@/types/common';
 import Tag from './Tag.vue';
+import CartDrawerButton from './CartDrawerButton.vue';
 
 // Stores
 const userStore = useUserStore();
@@ -434,7 +433,6 @@ const { logout } = useAuth();
 const activeMenu = ref<string | null>(null);
 const showSearchSuggestions = ref(false);
 const searchQuery = ref('');
-const cartCount = ref(3);
 const showMobileMenu = ref(false);
 const showMobileSearch = ref(false);
 const mobileCategoryOpen = ref<string | null>(null);
@@ -675,18 +673,6 @@ init()
 .mobile-logo h4 {
     font-weight: 700;
     letter-spacing: 1px;
-}
-
-/* Badge giỏ hàng */
-.cart-badge {
-    position: absolute;
-    top: -6px;
-    right: -8px;
-    background: #dc3545;
-    color: #fff;
-    font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 999px;
 }
 
 /* ========== SEARCH OVERLAY ========== */

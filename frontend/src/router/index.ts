@@ -48,6 +48,13 @@ const routes = [
         component: () => import('../pages/e-commerce/Profile/Profile.vue'),
         meta: { requiresAuth: true, role: RoleEnum.USER }
       },
+
+      {
+        path: "/cart",
+        name: "cart",
+        component: () => import('../pages/e-commerce/Cart/Cart.vue'),
+        meta: { requiresAuth: true }
+      },
     ]
   },
 

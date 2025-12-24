@@ -1,14 +1,16 @@
 <template>
     <div :key="product.id" class="product-card">
-        <div class="product-image">
-            <div v-if="product.isNew" class="product-badge new">
-                NEW
+        <router-link :to="`/product/${product.id}`" class="">
+            <div class="product-image">
+                <div v-if="product.isNew" class="product-badge new">
+                    NEW
+                </div>
+                <div v-if="product.discount > 0" class="product-badge discount">
+                    -{{ product.discount }}%
+                </div>
+                <img :src="product.image" :alt="product.name" loading="lazy" />
             </div>
-            <div v-if="product.discount > 0" class="product-badge discount">
-                -{{ product.discount }}%
-            </div>
-            <img :src="product.image" :alt="product.name" />
-        </div>
+        </router-link>
 
         <div class="product-info">
             <div class="product-colors">
@@ -27,20 +29,52 @@
                     </span>
                 </div>
 
-                <router-link :to="`/product/${product.id}`" class="btn btn-cart"><i
-                        class="pi pi-shopping-cart text-white" /></router-link>
+                <div class="position-relative d-inline-block">
+                    <button class="btn btn-outline-dark" @click.stop="toggleSize">
+                        <i class="pi pi-shopping-cart"></i>
+                    </button>
+
+                    <transition name="slide-fade">
+                        <ul v-if="openSize" class="size-box shadow bg-white rounded">
+                            <li v-for="size in sizes" :key="size.name" @click="size.quantity > 0 && selectSize(size)"
+                                :class="[
+                                    'size-item',
+                                    size.quantity > 0 ? 'active' : 'disabled'
+                                ]">
+                                {{ size.name }}
+                            </li>
+                        </ul>
+                    </transition>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
 import { formatPrice } from '@/utils/format';
+import { ref } from 'vue';
 
 
 const props = defineProps<{
     product: any
     colorMap: any
 }>()
+
+const openSize = ref(false)
+const sizes = [{ name: 'S', quantity: 0 }, { name: 'M', quantity: 10 }, { name: 'L', quantity: 5 }, { name: 'XL', quantity: 0 }, { name: 'XXL', quantity: 0 }]
+
+const addCart = (size: string, quantity: number) => {
+
+}
+
+const toggleSize = () => {
+    openSize.value = !openSize.value;
+};
+
+const selectSize = (size: { name: string; quantity: number }) => {
+    addCart(size.name, 1);
+    openSize.value = false;
+};
 </script>
 
 <style>
@@ -60,7 +94,7 @@ const props = defineProps<{
 
 .product-image {
     position: relative;
-    padding-top: 133%;
+    padding-top: 90%;
     overflow: hidden;
     background: #f5f5f5;
 }
@@ -153,11 +187,71 @@ const props = defineProps<{
     text-decoration: line-through;
 }
 
-.btn-cart {
-    background-color: rgba(0, 0, 0);
+.btn-outline-dark i {
+    color: black;
 }
 
-.btn-cart:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+.btn-outline-dark:hover i {
+    color: white;
+}
+
+/* BOX */
+.size-box {
+  position: absolute;
+  bottom: 55px;       /* nằm trên icon */
+  right: 0;
+  min-width: 100px;
+  padding: 6px 0;
+  margin: 0;          /* ❗ fix lệch */
+  list-style: none;  /* ❗ fix lệch */
+  text-align: center;
+  z-index: 1000;
+}
+
+/* ITEM */
+.size-item {
+  padding: 8px 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.size-item:hover {
+  background: #f1f1f1;
+}
+
+.size-item.disabled {
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+/* =========================
+   ANIMATION SLIDE + FADE
+========================= */
+.slide-fade-enter-active {
+  transition: all 0.4s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.4s ease;
+}
+
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateY(100px); /* từ dưới lên */
+}
+
+.slide-fade-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-50px); /* lên trên khi đóng */
 }
 </style>

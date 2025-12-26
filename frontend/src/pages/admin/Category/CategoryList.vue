@@ -48,7 +48,7 @@
                                             <div class="d-flex flex-column align-items-end gap-1">
                                                 <span v-if="category.pid" class="badge badge-info">
                                                     {{ category.parent?.name }} ({{
-                                                    categoryGender(category.parent?.gender) }})
+                                                        categoryGender(category.parent?.gender) }})
                                                 </span>
                                                 <span v-else class="badge badge-secondary">Danh mục gốc</span>
                                                 <Switch v-model="category.status"
@@ -117,8 +117,10 @@
                                                 :onClick="() => changeStatus(category.id, !category.status)" />
                                         </td>
                                         <td>
-                                            <button class="btn btn-sm btn-info mr-1" title="Xem sản phẩm"
-                                                @click="viewProducts(category.id)">👁️</button>
+                                            <button class="btn btn-sm btn-outline-info mr-1" title="Xem sản phẩm"
+                                                @click="viewProducts(category.id)" v-if="category.children_count > 0">
+                                                👁️
+                                            </button>
                                             <button class="btn btn-sm btn-warning mr-1" title="Chỉnh sửa"
                                                 @click="editCategory(category.id)">✏️</button>
                                             <button class="btn btn-sm btn-danger" title="Xóa"

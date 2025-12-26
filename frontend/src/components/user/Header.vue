@@ -472,7 +472,8 @@ const init = async () => {
     await getCategories({
         page: 1,
         limit: 100,
-        parent_only: true
+        parent_only: true,
+        status: true
     })
 }
 

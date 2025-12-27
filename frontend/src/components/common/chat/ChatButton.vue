@@ -49,7 +49,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { useSocket } from '@/composables/useSocket';
+import router from '@/router';
+import { ref, computed, inject } from 'vue'
 
 interface User {
     id: number;
@@ -66,6 +68,8 @@ interface Message {
     sender: string;
     seen?: boolean;
 }
+
+const socket = useSocket()
 
 const isChatVisible = ref(false);
 const searchTerm = ref('');
@@ -93,16 +97,8 @@ const selectUser = (user: User) => {
 };
 
 const sendMessage = () => {
-    if (newMessage.value.trim() && selectedUser.value) {
-        const currentChat = messages.value[selectedUser.value.id] || [];
-        currentChat.push({
-            id: currentChat.length + 1,
-            text: newMessage.value,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            sender: 'me',
-            seen: false
-        });
-        messages.value[selectedUser.value.id] = currentChat;
+    if (newMessage.value) {
+        socket.emit("send_message", { 'message': newMessage.value });
         newMessage.value = '';
     }
 };
@@ -119,10 +115,11 @@ const currentMessages = computed(() => {
 });
 
 const toggleChat = () => {
-    isChatVisible.value = !isChatVisible.value;
-    if (!isChatVisible.value) {
-        selectedUser.value = null; // Reset khi đóng chat
-    }
+    // isChatVisible.value = !isChatVisible.value;
+    // if (!isChatVisible.value) {
+    //     selectedUser.value = null; // Reset khi đóng chat
+    // }
+    router.push('chats/conversations')
 };
 </script>
 
@@ -133,15 +130,17 @@ const toggleChat = () => {
 
 .chat-button {
     position: fixed;
-    width: 44px;
-    bottom: 10px;
+    width: 60px;
+    bottom: 0px;
     right: 20px;
     padding: 10px 10px;
     border: none;
     background-color: #007bff;
     color: white;
-    border-radius: 50%;
+    border-top-left-radius: 15%;
+    border-top-right-radius: 15%;
     cursor: pointer;
+    z-index: 1;
 }
 
 .chat-container {

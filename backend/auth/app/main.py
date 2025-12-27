@@ -1,22 +1,19 @@
-import asyncio
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+import socketio
 from app.core.logging_config import setup_logging
 from app.core.config import settings
 from starlette.middleware.cors import CORSMiddleware
 from app.api.v1.api import api_router
 from app.db.session import create_tables
-from app.utils.logging_middleware import LoggingMiddleware
 from loguru import logger
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
-# Base.metadata.create_all(bind=engine)
+from app.socketio.server import sio
 
 setup_logging()
 
 app = FastAPI()
-
 
 @app.on_event("startup")
 async def startup_event():
@@ -36,6 +33,13 @@ if settings.all_cors_origins:
 # app.add_middleware(LoggingMiddleware)
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
+
+socket_app = socketio.ASGIApp(
+    sio
+)
+
+# Mount Socket.IO application
+app.mount("/", socket_app)
 
 
 # format all errors
@@ -82,3 +86,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             "errors": formatted_errors,
         },
     )
+

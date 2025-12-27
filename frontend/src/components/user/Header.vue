@@ -220,7 +220,7 @@
                             <i class="pi pi-shopping-cart" style="font-size: 20px;" />
                             <span class="cart-badge" v-if="cartCount > 0">{{ cartCount }}</span>
                         </router-link> -->
-                        <CartDrawerButton/>
+                        <CartDrawerButton />
                     </div>
                 </div>
             </div>
@@ -244,7 +244,7 @@
                     <button class="btn btn-link p-0 text-dark" @click="showMobileSearch = true">
                         <i class="pi pi-search" style="font-size: 20px;"></i>
                     </button>
-                    <CartDrawerButton/>
+                    <CartDrawerButton />
                 </div>
             </div>
         </div>

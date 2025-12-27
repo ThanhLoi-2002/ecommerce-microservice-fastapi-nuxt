@@ -11,6 +11,7 @@
         </div>
       </div>
     </div>
+    <ChatButton/>
   </div>
 </template>
 
@@ -18,6 +19,7 @@
 import Sidebar from '@/components/admin/Sidebar.vue';
 import Navbar from '@/components/admin/Navbar.vue'
 import { ref } from 'vue'
+import ChatButton from '@/components/common/chat/ChatButton.vue';
 
 const collapsed = ref(false)
 </script>

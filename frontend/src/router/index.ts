@@ -101,6 +101,19 @@ const routes = [
     ]
   },
 
+  // -------------------- CHAT ROUTES --------------------
+  {
+    path: "/chats",
+    meta: { requiresAuth: true, layout: "chat"},
+    children: [
+      {
+        path: "conversations",
+        name: "conversations",
+        component: () => import('../pages/chat/Conversation/index.vue')
+      },
+    ]
+  },
+
   // -------------------- 404 --------------------
   {
     path: '/:pathMatch(.*)*',

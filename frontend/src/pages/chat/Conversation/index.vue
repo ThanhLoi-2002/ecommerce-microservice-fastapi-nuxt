@@ -32,14 +32,15 @@
             </div>
 
             <!-- Messages Area -->
-            <div class="messages-area flex-grow-1 overflow-auto p-3 bg-light">
+            <div ref="messagesArea" class="messages-area flex-grow-1 p-3 bg-light">
                 <div v-for="message in messages" :key="message.id"
                     :class="['message-wrapper mb-3', message.senderId === 'me' ? 'justify-content-end' : 'justify-content-start']">
                     <div v-if="message.senderId !== 'me'" class="avatar-small mr-2">
                         <i class="pi pi-user"></i>
                     </div>
 
-                    <div class="message-content">
+                    <div class="message-content d-flex flex-column"
+                        :class="message.senderId === 'me' ? 'align-items-end' : 'align-items-start'">
                         <div v-if="message.type === 'text'"
                             :class="['message-bubble', message.senderId === 'me' ? 'message-sent' : 'message-received']">
                             {{ message.content }}
@@ -51,13 +52,14 @@
                             <span>{{ message.fileName }}</span>
                         </div>
 
-                        <small class="d-block text-muted mt-1">
+                        <small class="d-block text-muted mt-1 ">
                             {{ formatTime(message.timestamp) }}
                         </small>
                     </div>
                 </div>
             </div>
 
+            <div class="px-4 bg-light text-muted">Đang nhập ......</div>
             <!-- Message Input -->
             <div class="message-input bg-white border-top p-3">
 
@@ -73,15 +75,16 @@
                     </button>
                 </div>
 
-                <div class="d-flex align-items-center">
+
+                <div class="d-flex mb-2 gap-1">
                     <!-- File Upload -->
                     <input type="file" ref="fileInput" @change="handleFileSelect" style="display: none" />
-                    <button @click="triggerFileInput" class="btn btn-light rounded-circle mr-2" title="Đính kèm file">
+                    <button @click="triggerFileInput" class="btn-action" title="Đính kèm file">
                         <i class="pi pi-paperclip"></i>
                     </button>
 
                     <!-- Emoji Button -->
-                    <button @click="showEmojiPicker = !showEmojiPicker" class="btn btn-light rounded-circle mr-2"
+                    <button @click="showEmojiPicker = !showEmojiPicker" class="btn-action"
                         title="Chọn emoji">
                         <i class="pi pi-face-smile"></i>
                     </button>
@@ -97,13 +100,15 @@
                     <!-- Image Upload -->
                     <input type="file" ref="imageInput" @change="handleImageSelect" accept="image/*"
                         style="display: none" />
-                    <button @click="triggerImageInput" class="btn btn-light rounded-circle mr-2" title="Gửi ảnh">
+                    <button @click="triggerImageInput" class="btn-action" title="Gửi ảnh">
                         <i class="pi pi-image"></i>
                     </button>
+                </div>
 
+                <div class="d-flex gap-1">
                     <!-- Text Input -->
                     <input v-model="inputMessage" @keypress.enter="sendMessage" type="text"
-                        class="form-control rounded-pill mr-2" placeholder="Nhập tin nhắn..." />
+                        class="form-control rounded-pill" placeholder="Nhập tin nhắn..." />
 
                     <!-- Send Button -->
                     <button @click="sendMessage" class="btn btn-primary rounded-circle"
@@ -111,13 +116,14 @@
                         <i class="pi pi-send" style="transform: rotate(45deg);"></i>
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import Conversations from './components/Conversations.vue';
 import { useConversationStore } from '@/stores/conversation.store';
 import { storeToRefs } from 'pinia';
@@ -161,6 +167,7 @@ const selectedFile = ref<File | null>(null);
 const showEmojiPicker = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 const imageInput = ref<HTMLInputElement | null>(null);
+const messagesArea = ref<HTMLDivElement | null>(null);
 
 const conversationStore = useConversationStore()
 const { selectedConversation } = storeToRefs(conversationStore)
@@ -181,6 +188,11 @@ const sendMessage = () => {
         inputMessage.value = '';
         selectedFile.value = null;
         showEmojiPicker.value = false;
+        nextTick(() => {
+            if (messagesArea.value) {
+                messagesArea.value.scrollTop = messagesArea.value.scrollHeight;
+            }
+        });
     }
 };
 
@@ -232,7 +244,8 @@ const addEmoji = (emoji: string) => {
 }
 
 .messages-area {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e0e0e0' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    max-height: 100%;
+    overflow-y: auto;
 }
 
 .message-wrapper {
@@ -278,6 +291,15 @@ const addEmoji = (emoji: string) => {
 
 .min-width-0 {
     min-width: 0;
+}
+
+.btn-action {
+    border: none;
+    background-color: white;
+}
+
+.btn-action:hover {
+    background-color: rgb(223, 221, 221);
 }
 
 .message-input {

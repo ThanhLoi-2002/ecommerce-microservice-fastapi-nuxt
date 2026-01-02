@@ -31,17 +31,19 @@
                     </div>
 
                     <!-- Conversation Info -->
-                    <div class="flex-grow-1 my-auto" style="width: 50%">
-                        <h6 class="mb-0 font-weight-bold text-truncate">{{ conv.name }}</h6>
-                        <p class="mb-0 text-muted small text-truncate">{{ conv.lastMessage }}</p>
-                    </div>
-
-                    <div class="d-flex flex-column align-items-center" style="width: 20%"><span
-                            class="small">{{
+                    <div class="flex-grow-1 my-auto">
+                        <div class="d-flex justify-content-between">
+                            <h6 class="mb-0 font-weight-bold text-truncate">{{ conv.name }}</h6><span class="small">{{
                                 conv.lastMessageTime
-                            }}</span><span v-if="conv.unreadCount > 0" class="badge badge-danger mt-1">{{ conv.unreadCount
-                            }}</span></div>
-                    <!-- Unread Badge -->
+                            }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <p class="mb-0 text-muted small text-truncate">{{ conv.lastMessage }}</p><span
+                                v-if="conv.unreadCount > 0" class="badge badge-danger mt-1">{{ conv.unreadCount
+                                }}</span>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -100,7 +102,7 @@ const conversations = ref<Conversation[]>([
     },
 ]);
 
-const selectedConversation = ref<Conversation | null>(conversations.value[0] || null);
+const selectedConversation = ref<Conversation | null>(null);
 const searchQuery = ref('');
 const conversationStore = useConversationStore()
 
@@ -168,7 +170,7 @@ const selectConversation = (conv: Conversation) => {
 .group-badge {
     position: absolute;
     bottom: -4px;
-    right: -4px;
+    right: -15px;
     width: 20px;
     height: 20px;
     background-color: #007bff;

@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { useSocket } from '@/composables/useSocket';
 import router from '@/router';
-import { ref, computed, inject } from 'vue'
+import { ref, computed } from 'vue'
 
 interface User {
     id: number;

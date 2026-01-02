@@ -8,7 +8,7 @@
         <!-- Menu Items -->
         <div class="menu-items flex-grow-1 d-flex flex-column align-items-center">
             <router-link v-for="item in topMenu" :to="item.url" :key="item.title" class="menu-btn mb-3"
-                :class="isActive(`/chats/${item.url}`)" :title="item.title">
+                :class="isActive(item.url)" :title="item.title">
                 <i :class="`pi pi-${item.icon}`"></i>
             </router-link>
         </div>
@@ -31,7 +31,7 @@ const { user } = storeToRefs(userStore)
 const route = useRoute()
 
 const topMenu = [
-    { title: 'Tin nhắn', icon: 'comment', url: 'conversations' },
+    { title: 'Tin nhắn', icon: 'comment', url: '/chats/conversations' },
     { title: 'Shop', icon: 'shop', url: '/' },
 ]
 

@@ -10,6 +10,7 @@ class RoleEnum(str, Enum):
     ADMIN = "ADMIN"
     USER = "USER"
 
+
 class User(Base):
     __tablename__ = "Users"
     id = Column(Integer, primary_key=True)
@@ -18,3 +19,7 @@ class User(Base):
     name = Column(String(255))
     avatar = Column(JSONB, nullable=True)
     role = Column(SqlEnum(RoleEnum), nullable=False, default=RoleEnum.USER)
+
+    conversations = relationship(
+        "Conversation", secondary="conversation_members", back_populates="members"
+    )

@@ -60,6 +60,19 @@
 
             <!-- Message Input -->
             <div class="message-input bg-white border-top p-3">
+
+                <!-- File Preview -->
+                <div v-if="selectedFile"
+                    class="file-preview mb-2 p-2 bg-light rounded d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <i class="pi pi-file text-primary mr-2"></i>
+                        <span class="small">{{ selectedFile.name }}</span>
+                    </div>
+                    <button @click="clearSelectedFile" class="btn btn-sm btn-link text-danger">
+                        <i class="pi pi-times"></i>
+                    </button>
+                </div>
+
                 <div class="d-flex align-items-center">
                     <!-- File Upload -->
                     <input type="file" ref="fileInput" @change="handleFileSelect" style="display: none" />
@@ -70,7 +83,7 @@
                     <!-- Emoji Button -->
                     <button @click="showEmojiPicker = !showEmojiPicker" class="btn btn-light rounded-circle mr-2"
                         title="Chọn emoji">
-                        <i class="pi pi-smile"></i>
+                        <i class="pi pi-face-smile"></i>
                     </button>
 
                     <!-- Emoji Picker -->
@@ -95,19 +108,7 @@
                     <!-- Send Button -->
                     <button @click="sendMessage" class="btn btn-primary rounded-circle"
                         :disabled="!inputMessage.trim() && !selectedFile">
-                        <i class="pi pi-paper-plane"></i>
-                    </button>
-                </div>
-
-                <!-- File Preview -->
-                <div v-if="selectedFile"
-                    class="file-preview mt-2 p-2 bg-light rounded d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <i class="pi pi-file text-primary mr-2"></i>
-                        <span class="small">{{ selectedFile.name }}</span>
-                    </div>
-                    <button @click="clearSelectedFile" class="btn btn-sm btn-link text-danger">
-                        <i class="pi pi-times"></i>
+                        <i class="pi pi-send" style="transform: rotate(45deg);"></i>
                     </button>
                 </div>
             </div>
@@ -116,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import Conversations from './components/Conversations.vue';
 import { useConversationStore } from '@/stores/conversation.store';
 import { storeToRefs } from 'pinia';
@@ -291,6 +292,7 @@ const addEmoji = (emoji: string) => {
     grid-template-columns: repeat(5, 1fr);
     gap: 5px;
     max-width: 200px;
+    overflow: auto;
 }
 
 .emoji-item {

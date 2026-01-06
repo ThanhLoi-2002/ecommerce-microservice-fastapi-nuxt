@@ -1,13 +1,16 @@
-from sqlalchemy import Column, DateTime, Integer, String, Table, ForeignKey, Text, func
+from sqlalchemy import Column, DateTime, Integer, String, Table, ForeignKey, Text, func, Enum as SqlEnum
 from app.db.base import Base
-import enum
+from enum import Enum
 from sqlalchemy.orm import relationship
 
 
-class ConversationType(enum.Enum):
-    PRIVATE = "private"
-    GROUP = "group"
+class ConversationType(str, Enum):
+    PRIVATE = "PRIVATE"
+    GROUP = "GROUP"
 
+class AdminRole(str, Enum):
+    LEADER = "LEADER"
+    DEPUTY = "DEPUTY"
 
 conversation_members = Table(
     "conversation_members",
@@ -16,16 +19,19 @@ conversation_members = Table(
         "conversation_id", Integer, ForeignKey("conversations.id"), primary_key=True
     ),
     Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
+    Column("last_read_message_id", Integer, ForeignKey("messages.id"), primary_key=True)
 )
 
-conversation_admins = Table(
-    "conversation_admins",
-    Base.metadata,
-    Column(
-        "conversation_id", Integer, ForeignKey("conversations.id"), primary_key=True
-    ),
-    Column("user_id", Integer, ForeignKey("users.id"), primary_key=True),
-)
+class ConversationAdmins(Base):
+    __tablename__ = "conversation_admins"
+
+    conversation_id = Column(Integer, ForeignKey("conversations.id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    role = Column(SqlEnum(AdminRole), nullable=False)
+
+    # Relationships
+    conversation = relationship("Conversation", back_populates="admins")
+    user = relationship("User", back_populates="admin_conversations")
 
 
 class Conversation(Base):
@@ -40,7 +46,7 @@ class Conversation(Base):
     avatar = Column(String(255), nullable=True)
 
     # Loại conversation
-    type = Column(enum.Enum(ConversationType), nullable=False)
+    type = Column(SqlEnum(ConversationType), nullable=False)
 
     # Nhóm trưởng
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
@@ -53,28 +59,7 @@ class Conversation(Base):
 
     # ================= Relationships =================
 
-    # Thành viên
-    members = relationship(
-        "User", secondary="conversation_members", back_populates="conversations"
-    )
-
-    # Nhóm trưởng
+    members = relationship("User", secondary=conversation_members, back_populates="conversations")
     owner = relationship("User", foreign_keys=[owner_id])
-
-    # Nhóm phó (many-to-many)
-    admins = relationship(
-        "User", secondary="conversation_admins", back_populates="admin_conversations"
-    )
-
-    # Tin nhắn cuối
+    admins = relationship("ConversationAdmins", back_populates="conversation")
     last_message = relationship("Message", foreign_keys=[last_message_id])
-
-
-class Message(Base):
-    __tablename__ = "messages"
-
-    id = Column(Integer, primary_key=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id"))
-    sender_id = Column(Integer, ForeignKey("users.id"))
-    content = Column(Text)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())

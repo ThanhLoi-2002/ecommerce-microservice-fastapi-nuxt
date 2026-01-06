@@ -83,7 +83,6 @@ instance.interceptors.response.use(
                 queue = [];
                 removeToken()
                 window.location.href = '/'
-                console.log(err)
                 return Promise.reject(err);
             }
         }

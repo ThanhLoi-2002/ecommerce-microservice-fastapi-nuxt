@@ -494,24 +494,6 @@ input:checked + .slider:before {
   border-color: #dee2e6;
 }
 
-/* Scrollbar */
-.chat-info::-webkit-scrollbar {
-  width: 6px;
-}
-
-.chat-info::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.chat-info::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-.chat-info::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
   .chat-info {

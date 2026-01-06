@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+import json
+from fastapi import APIRouter, Depends, HTTPException
 from app.common.decorator.responseMessage import response_message
 from app.common.middleware.response_wrapper import ResponseInterceptorRoute
 from app.api.v1.deps import AsyncSessionDep, CurrentUser, roles_required
 from app.db.models.user import RoleEnum, User
-from app.schemas.type import Image
-from app.schemas.user import UpdateUserDto, UserResponse
+from app.schemas.type import Image, PaginatedResponse
+from app.schemas.user import SearchUserDto, UpdateUserDto, UserResponse
 from app.crud.crud_user import crud_user
 from app.core.cloudinary_config import cloudinary
 import cloudinary.uploader
@@ -16,6 +17,18 @@ router = APIRouter(route_class=ResponseInterceptorRoute)
 def me(
     user: User = Depends(roles_required([RoleEnum.ADMIN, RoleEnum.USER])),
 ):
+    return user
+
+
+@router.get("/search-user", response_model=UserResponse)
+async def searchUser(
+    db: AsyncSessionDep,
+    search: SearchUserDto = Depends(),
+    _: User = Depends(roles_required([RoleEnum.ADMIN, RoleEnum.USER])),
+):
+    user = await crud_user.get_one(db, {"email": search.email})
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
     return user
 
 

@@ -33,7 +33,7 @@ async def get_current_user(db: AsyncSessionDep, token: TokenDep) -> User:
     user = await db.get(User, token_data.id)
 
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=401, detail="Unauthorized")
     # if not user.is_active:
     #     raise HTTPException(status_code=400, detail="Inactive user")
     return user

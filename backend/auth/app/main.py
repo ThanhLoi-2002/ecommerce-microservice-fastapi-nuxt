@@ -15,9 +15,9 @@ setup_logging()
 
 app = FastAPI()
 
-@app.on_event("startup")
-async def startup_event():
-    await create_tables()
+# @app.on_event("startup")
+# async def startup_event():
+#     await create_tables()
 
 
 # Set all CORS enabled origins

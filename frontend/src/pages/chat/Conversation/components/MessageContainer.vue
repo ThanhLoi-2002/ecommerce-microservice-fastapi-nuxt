@@ -19,9 +19,6 @@
                         <button class="btn btn-link text-secondary p-2">
                             <i class="pi pi-phone"></i>
                         </button>
-                        <!-- <button class="btn btn-link text-secondary p-2">
-                            <i class="pi pi-video"></i>
-                        </button> -->
                         <VideoCallButton :remoteUser="remoteUser" />
                         <button class="btn btn-link text-secondary p-2" @click="isOpenInfo = !isOpenInfo"
                             :class="isOpenInfo ? 'active' : ''">
@@ -156,7 +153,92 @@ const messages = ref<Message[]>([
         type: 'image',
         fileUrl: 'https://media-cdn-v2.laodong.vn/storage/newsportal/2023/8/26/1233821/Giai-Nhi-1--Nang-Tre.jpg?w=800&crop=auto&scale=both',
         timestamp: new Date()
-    }
+    },
+    {
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },{
+        id: 2,
+        senderId: 'me',
+        type: 'file',
+        fileName: '123.pdf',
+        fileUrl: '/uploads/123.pdf',
+        timestamp: new Date()
+    },
 ]);
 
 const conversationStore = useConversationStore()
@@ -327,28 +409,6 @@ onBeforeUnmount(() => {
 
 .btn-link:hover {
     color: #007bff !important;
-}
-
-/* Scrollbar Styling */
-.conversations-list::-webkit-scrollbar,
-.messages-area::-webkit-scrollbar {
-    width: 6px;
-}
-
-.conversations-list::-webkit-scrollbar-track,
-.messages-area::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.conversations-list::-webkit-scrollbar-thumb,
-.messages-area::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
-}
-
-.conversations-list::-webkit-scrollbar-thumb:hover,
-.messages-area::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
 }
 
 .btn.btn-link.active i {

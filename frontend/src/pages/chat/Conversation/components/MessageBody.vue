@@ -1,5 +1,5 @@
 <template>
-    <div class="" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+    <div class="message-wrapper" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
         <div class="message-content d-flex flex-column"
             :class="message.senderId === 'me' ? 'align-items-end' : 'align-items-start'">
 
@@ -82,7 +82,7 @@
         </div>
 
         <!-- Reaction Picker -->
-        <div v-if="showReactionPicker" class="reaction-picker"
+        <div v-show="showReactionPicker" class="reaction-picker"
             :class="message.senderId === 'me' ? 'picker-left' : 'picker-right'" @click.stop>
             <button v-for="emoji in reactionEmojis" :key="emoji" @click="addReaction(emoji)" class="reaction-emoji">
                 {{ emoji }}
@@ -313,6 +313,7 @@ const handleReact = (event: MouseEvent) => {
     event.stopPropagation();
     showReactionPicker.value = !showReactionPicker.value;
     showContextMenu.value = false;
+    console.log('1223', showReactionPicker.value)
 };
 
 const addReaction = (emoji: string) => {
@@ -351,6 +352,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.message-wrapper {
+    position: relative;
+}
+
 .message-content {
     position: relative;
     max-width: 100%;

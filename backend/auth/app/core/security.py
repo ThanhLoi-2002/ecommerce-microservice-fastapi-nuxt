@@ -31,6 +31,15 @@ def decode_jwt(token: str) -> dict:
         return decoded_token if decoded_token["exp"] >= time.time() else None
     except Exception as e:
         return None
+    
+def decode_refresh_token(token: str) -> dict:
+    try:
+        decoded_token = jwt.decode(
+            token, settings.REFRESH_TOKEN, algorithms=[settings.ALGORITHM]
+        )
+        return decoded_token if decoded_token["exp"] >= time.time() else None
+    except Exception as e:
+        return None
 
 
 def refreshToken(refreshToken: str) -> str:

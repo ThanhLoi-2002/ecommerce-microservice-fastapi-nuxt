@@ -1,22 +1,10 @@
 <template>
-    <div class="conversations-sidebar border-right bg-white">
+    <div class="conversations-sidebar border-right bg-white ">
         <!-- Header -->
-        <div class="p-3 border-bottom">
-            <h4 class="text-primary font-weight-bold mb-3">Chat</h4>
-            <!-- Search Bar -->
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text bg-light border-0">
-                        <i class="pi pi-search text-muted"></i>
-                    </span>
-                </div>
-                <input type="text" v-model="searchQuery" class="form-control border-0 bg-light"
-                    placeholder="Tìm kiếm" />
-            </div>
-        </div>
+        <ActionHeader />
 
         <!-- Conversations List -->
-        <div class="conversations-list overflow-auto">
+        <div style="overflow-y: auto;">
             <div v-for="conv in filteredConversations" :key="conv.id" @click="selectConversation(conv)"
                 :class="['conversation-item p-3 cursor-pointer', { active: selectedConversation?.id === conv.id }]">
                 <div class="d-flex align-items-center">
@@ -35,7 +23,7 @@
                         <div class="d-flex justify-content-between">
                             <h6 class="mb-0 font-weight-bold text-truncate">{{ conv.name }}</h6><span class="small">{{
                                 conv.lastMessageTime
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div class="d-flex justify-content-between">
@@ -53,6 +41,7 @@
 <script setup lang="ts">
 import { useConversationStore } from '@/stores/conversation.store';
 import { computed, ref } from 'vue';
+import ActionHeader from './ActionHeader.vue';
 
 interface Conversation {
     id: string;
@@ -123,10 +112,6 @@ const selectConversation = (conv: Conversation) => {
     width: 320px;
     display: flex;
     flex-direction: column;
-}
-
-.conversations-list {
-    flex: 1;
 }
 
 .conversation-item {

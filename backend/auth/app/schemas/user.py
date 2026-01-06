@@ -14,6 +14,9 @@ class UpdateUserDto(BaseModel):
     name: str = Field(..., min_length=2)
     email: EmailStr
 
+class SearchUserDto(BaseModel):
+    email: EmailStr
+
 
 class UserResponse(BaseModel):
     id: int

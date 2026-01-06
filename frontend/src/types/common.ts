@@ -10,14 +10,25 @@ export enum SortEnum {
 }
 
 export enum GenderEnum {
-    MALE = "MALE",
-    FEMALE = "FEMALE",
-    BOTH = "BOTH"
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  BOTH = "BOTH"
 }
 
 export enum RoleEnum {
   ADMIN = "ADMIN",
   USER = "USER"
+}
+
+export enum ConversationEnum {
+  PRIVATE = "PRIVATE",
+  GROUP = "GROUP"
+}
+
+export enum MessageTypeEnum {
+  TEXT = "TEXT",
+  IMAGE = "IMAGE",
+  FILE = "FILE"
 }
 
 export type OptionType = {
@@ -51,4 +62,15 @@ export type CategoryFilter = PageginationFilter & {
   status?: boolean
   parent_only?: boolean
   is_metadata?: boolean
+}
+
+export interface Contact {
+  id: number;
+  name: string;
+  phone?: string;
+  avatar: string;
+  section?: string;
+  gender?: string;
+  birthDate?: string;
+  coverImage?: string;
 }

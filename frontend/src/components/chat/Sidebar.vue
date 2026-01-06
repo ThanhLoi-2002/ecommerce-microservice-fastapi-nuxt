@@ -2,7 +2,7 @@
     <div class="left-menu bg-primary d-flex flex-column align-items-center py-3">
         <!-- User Avatar -->
         <div class="menu-avatar mb-4">
-            <img :src="user?.avatar?.url" alt="User" class="rounded-circle">
+            <img :src="user?.avatar?.url ?? DEFAULT_AVATAR" alt="User" class="rounded-circle">
         </div>
 
         <!-- Menu Items -->
@@ -23,6 +23,7 @@
 </template>
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user.store';
+import { DEFAULT_AVATAR } from '@/utils/constants';
 import { storeToRefs } from 'pinia';
 import { useRoute } from 'vue-router';
 

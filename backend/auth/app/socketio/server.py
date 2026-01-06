@@ -59,6 +59,46 @@ async def get_online_users_event(sid):
     pass
 
 # ===== SEND MESSAGE =====
+# @sio.event
+# async def send_message(sid, data):
+#     print(json.dumps(data))
+#     session = await sio.get_session(sid)
+#     sender_id = session["user_id"]
+
+#     conversation_id = data["conversation_id"]
+#     content = data["content"]
+
+#     # 1. save message DB
+#     message_id = save_message_db(
+#         conversation_id, sender_id, content
+#     )
+
+#     # 2. update last_message
+#     update_last_message(conversation_id, message_id)
+
+#     # 3. emit to room
+#     await sio.emit(
+#         "new_message",
+#         {
+#             "conversation_id": conversation_id,
+#             "message_id": message_id,
+#             "sender_id": sender_id,
+#             "content": content,
+#         },
+#         room=f"conversation_{conversation_id}"
+#     )
+
 @sio.event
-async def send_message(sid, data):
-    print(json.dumps(data))
+async def join_conversation(sid, data):
+    conversation_id = data["conversation_id"]
+    await sio.enter_room(sid, f"conversation_{conversation_id}")
+
+# @sio.event
+# async def mark_read(sid, data):
+#     session = await sio.get_session(sid)
+#     user_id = session["user_id"]
+
+#     conversation_id = data["conversation_id"]
+#     last_message_id = data["last_message_id"]
+
+#     update_last_read(conversation_id, user_id, last_message_id)

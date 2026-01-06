@@ -1,9 +1,9 @@
 <template>
-    <div v-if="open" class="modal-backdrop" @click="closeModal">
-        <div class="modal-dialog" @click.stop>
+    <div v-show="open" class="modal-backdrop" @click="closeModal" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered" @click.stop>
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title font-weight-bold">
                         {{ title }}
                     </h5>
                     <button type="button" class="close" @click="closeModal">

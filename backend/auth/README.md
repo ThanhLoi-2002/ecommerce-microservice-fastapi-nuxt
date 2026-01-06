@@ -8,3 +8,6 @@ pip install -r requirements.txt
 pip freeze > requirements.txt
 
 run uvicorn app.main:app --reload
+
+alembic revision --autogenerate -m "init"
+alembic upgrade head

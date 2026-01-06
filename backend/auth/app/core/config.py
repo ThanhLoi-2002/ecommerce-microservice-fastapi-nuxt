@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str = ""
     POSTGRES_DB: str = ""
     POSTGRES_DB_URL: str = ""
+    DATABASE_URL_SYNC: str = ""
 
     @computed_field  # type: ignore[prop-decorator]
     @property

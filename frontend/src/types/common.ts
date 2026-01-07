@@ -31,6 +31,12 @@ export enum MessageTypeEnum {
   FILE = "FILE"
 }
 
+export enum AdminRoleEnum {
+  LEADER = "LEADER",
+  DEPUTY = "DEPUTY"
+}
+
+
 export type OptionType = {
   label: string
   value: string

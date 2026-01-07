@@ -1,4 +1,4 @@
-import type { ImageType, RoleEnum, GenderEnum, ConversationEnum, MessageTypeEnum } from "./common";
+import type { ImageType, RoleEnum, GenderEnum, ConversationEnum, MessageTypeEnum, AdminRoleEnum } from "./common";
 
 export type BaseEntity = {
   id: number;
@@ -42,10 +42,10 @@ export type MessageType = BaseEntity & {
   content?: string;
   type: MessageTypeEnum;
   file?: {
-    name: string;
-    size: string;
-    url: string;
-    public_id: string
+    name?: string;
+    size?: string;
+    url?: string;
+    public_id?: string
   };
   linkPreview?: {
     url: string;
@@ -55,11 +55,20 @@ export type MessageType = BaseEntity & {
   };
 }
 
+export type ConversationAdminType = {
+  conversation_id: number
+  // user_id: number
+  role: AdminRoleEnum
+
+  // conversation: ConversationType
+  user: UserType
+}
+
 export type ConversationType = BaseEntity & {
-    name?: string;
-    type: ConversationEnum;
-    lastMessage: string;
-    lastMessageTime: string;
-    unreadCount: number;
-    members?: string[];
+  name?: string;
+  type: ConversationEnum;
+  last_message?: MessageType;
+  owner?: UserType;
+  admins: ConversationAdminType[]
+  members?: string[];
 }

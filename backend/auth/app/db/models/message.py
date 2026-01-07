@@ -8,6 +8,7 @@ class MessageType(str, Enum):
     TEXT = "TEXT"
     IMAGE = "IMAGE"
     FILE = "FILE"
+    SYSTEM = "SYSTEM"
 
 
 class Message(Base):
@@ -15,7 +16,7 @@ class Message(Base):
 
     id = Column(Integer, primary_key=True)
     conversation_id = Column(Integer, ForeignKey("conversations.id"))
-    sender_id = Column(Integer, ForeignKey("users.id"))
+    sender_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     content = Column(Text)
     file = Column(JSONB)
     type = Column(SqlEnum(MessageType), default=MessageType.TEXT)

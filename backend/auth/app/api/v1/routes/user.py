@@ -5,7 +5,7 @@ from app.common.middleware.response_wrapper import ResponseInterceptorRoute
 from app.api.v1.deps import AsyncSessionDep, CurrentUser, roles_required
 from app.db.models.user import RoleEnum, User
 from app.schemas.type import Image, PaginatedResponse
-from app.schemas.user import SearchUserDto, UpdateUserDto, UserResponse
+from app.schemas.user import FilterUsers, UpdateUserDto, UserResponse
 from app.crud.crud_user import crud_user
 from app.core.cloudinary_config import cloudinary
 import cloudinary.uploader
@@ -20,16 +20,13 @@ def me(
     return user
 
 
-@router.get("/search-user", response_model=UserResponse)
+@router.get("/search-users", response_model=PaginatedResponse[UserResponse])
 async def searchUser(
     db: AsyncSessionDep,
-    search: SearchUserDto = Depends(),
+    search: FilterUsers = Depends(),
     _: User = Depends(roles_required([RoleEnum.ADMIN, RoleEnum.USER])),
 ):
-    user = await crud_user.get_one(db, {"email": search.email})
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return await crud_user.get_list(db, search)
 
 
 @router.put("", response_model=UserResponse)

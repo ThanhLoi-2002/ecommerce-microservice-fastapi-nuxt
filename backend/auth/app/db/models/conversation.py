@@ -1,7 +1,8 @@
-from sqlalchemy import Column, DateTime, Integer, String, Table, ForeignKey, Text, func, Enum as SqlEnum
+from sqlalchemy import Column, DateTime, Integer, String, Table, ForeignKey, func, Enum as SqlEnum
 from app.db.base import Base
 from enum import Enum
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 class ConversationType(str, Enum):
@@ -43,7 +44,7 @@ class Conversation(Base):
     name = Column(String(255), nullable=True, index=True)
 
     # Avatar nhóm / avatar cuộc trò chuyện
-    avatar = Column(String(255), nullable=True)
+    avatar = Column(JSONB, nullable=True)
 
     # Loại conversation
     type = Column(SqlEnum(ConversationType), nullable=False)

@@ -5,7 +5,7 @@ import type { UserProfileFormType } from '@/types/form/user.form';
 import { reactive } from 'vue';
 import { useToast } from './useToast';
 import { useAuthStore } from '@/stores/auth.store';
-import type { ImageType } from '@/types/common';
+import type { ImageType, UserFilter } from '@/types/common';
 import { useUpload } from './useUpload';
 import mediaApi from '@/api/media.api';
 import { storeToRefs } from 'pinia';
@@ -74,5 +74,16 @@ export function useUser() {
         }
     }
 
-    return { userProfileForm, getMe, updateProfile, updateAvatar }
+    const searchUsers = async (filters: UserFilter) => {
+        try {
+            const { data }: any = await userApi.searchUsers(filters)
+            return data
+        }
+        catch (error: any) {
+            toast.error(error.message)
+            return undefined
+        }
+    }
+
+    return { userProfileForm, getMe, updateProfile, updateAvatar, searchUsers }
 }

@@ -25,18 +25,14 @@
         <!-- <FileMessage/> -->
 
         <!-- Add Friend Modal -->
-        <Modal title="Thêm bạn" :open="showAddFriend" :closeModal="() => showAddFriend = false">
+        <Modal title="Thêm bạn" :open="showAddFriend" :closeModal="closeAddFriendModal">
             <div class="form-group">
                 <div class="input-group">
-                    <div class="input-group-prepend">
-                        <select class="custom-select border-0 bg-light" v-model="countryCode" style="max-width: 100px;">
-                            <option value="+84">🇻🇳 (+84)</option>
-                            <option value="+1">🇺🇸 (+1)</option>
-                            <option value="+44">🇬🇧 (+44)</option>
-                        </select>
+                    <div class="d-flex justify-content-center align-items-center bg-light" style="min-width: 35px;">
+                        <i class="pi pi-envelope text-muted" />
                     </div>
-                    <input type="tel" class="form-control border-0 bg-light" placeholder="Số điện thoại"
-                        v-model="phoneNumber" />
+                    <input type="email" class="form-control border-0 bg-light" placeholder="Email" v-model="email"
+                        @input="debouncedEmail(email)" />
                 </div>
             </div>
 
@@ -161,7 +157,7 @@
         </Modal>
 
         <!-- Profile Modal -->
-        <FriendProfileModal :isOpen="showProfile" :profile="selectedProfile" :close="() => showProfile = false"/>
+        <FriendProfileModal :isOpen="showProfile" :profile="selectedProfile" :close="() => showProfile = false" />
     </div>
 </template>
 
@@ -171,14 +167,24 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import FriendProfileModal from './Modal/FriendProfileModal.vue';
 import type { Contact } from '@/types/common';
 import FileMessage from './Message/FileMessage.vue';
+import { useUser } from '@/composables/useUser';
+import type { UserType } from '@/types/entities';
+import { useDebounceFn } from '@vueuse/core'
 
+const { searchUsers } = useUser()
 // Search
 const searchQuery = ref('');
 
 // Add Friend Modal
 const showAddFriend = ref(false);
-const phoneNumber = ref('');
-const countryCode = ref('+84');
+const email = ref('');
+const users = ref<UserType[]>([])
+
+const debounceSearchUsers = async (email: string) => {
+    users.value = (await searchUsers({ email, "limit": 100 }))?.items ?? []
+}
+
+const debouncedEmail = useDebounceFn(debounceSearchUsers, 500);
 
 const recentContacts = ref<Contact[]>([
     { id: 1, name: 'Thùy Vy', phone: '(+84) 0332 871178', avatar: '👤' },
@@ -225,26 +231,31 @@ const catScroll = ref<HTMLElement | null>(null)
 
 // ====== CUỘN CHUỘT ======
 const handleWheel = (e: WheelEvent) => {
-  const el = catScroll.value
-  if (!el) return
+    const el = catScroll.value
+    if (!el) return
 
-  if (el.scrollWidth <= el.clientWidth) return
+    if (el.scrollWidth <= el.clientWidth) return
 
-  e.preventDefault()
-  el.scrollLeft += e.deltaY
+    e.preventDefault()
+    el.scrollLeft += e.deltaY
+}
+
+const closeAddFriendModal = () => {
+    showAddFriend.value = false
+    email.value = ''
 }
 
 onMounted(() => {
-  const el = catScroll.value
-  if (!el) return
+    const el = catScroll.value
+    if (!el) return
 
-  el.addEventListener('wheel', handleWheel, { passive: false })
+    el.addEventListener('wheel', handleWheel, { passive: false })
 })
 
 onBeforeUnmount(() => {
-  const el = catScroll.value
-  if (!el) return
+    const el = catScroll.value
+    if (!el) return
 
-  el.removeEventListener('wheel', handleWheel)
+    el.removeEventListener('wheel', handleWheel)
 })
 </script>

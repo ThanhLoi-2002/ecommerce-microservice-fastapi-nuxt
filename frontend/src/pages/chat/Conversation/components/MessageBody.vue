@@ -313,7 +313,6 @@ const handleReact = (event: MouseEvent) => {
     event.stopPropagation();
     showReactionPicker.value = !showReactionPicker.value;
     showContextMenu.value = false;
-    console.log('1223', showReactionPicker.value)
 };
 
 const addReaction = (emoji: string) => {

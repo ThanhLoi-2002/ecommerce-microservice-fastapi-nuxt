@@ -58,6 +58,7 @@ async def get_online_users_event(sid):
     # await sio.emit("online_users", users, to=sid)
     pass
 
+
 # ===== SEND MESSAGE =====
 # @sio.event
 # async def send_message(sid, data):
@@ -88,17 +89,72 @@ async def get_online_users_event(sid):
 #         room=f"conversation_{conversation_id}"
 #     )
 
+
 @sio.event
 async def join_conversation(sid, data):
     conversation_id = data["conversation_id"]
     await sio.enter_room(sid, f"conversation_{conversation_id}")
+    await sio.emit("joined_conversation", {"conversation_id": conversation_id}, to=sid)
 
-# @sio.event
-# async def mark_read(sid, data):
-#     session = await sio.get_session(sid)
-#     user_id = session["user_id"]
 
-#     conversation_id = data["conversation_id"]
-#     last_message_id = data["last_message_id"]
+@sio.event
+async def leave_conversation(sid, data):
+    conversation_id = data["conversation_id"]
+    await sio.leave_room(sid, f"conversation_{conversation_id}")
+    await sio.emit("left_conversation", {"conversation_id": conversation_id}, to=sid)
 
-#     update_last_read(conversation_id, user_id, last_message_id)
+
+@sio.event
+async def mark_messages_read(sid, data):
+    # This would need DB access, but for now just emit
+    conversation_id = data["conversation_id"]
+    last_message_id = data["last_message_id"]
+    user_id = data.get("user_id")  # From auth
+
+    # In real implementation, update last_read_message_id in conversation_members
+    await sio.emit(
+        "messages_read",
+        {
+            "conversation_id": conversation_id,
+            "user_id": user_id,
+            "last_message_id": last_message_id,
+        },
+        room=f"conversation_{conversation_id}",
+    )
+
+
+# Handle conversation events (these are emitted from routes, but can also be direct)
+@sio.event
+async def conversation_created(sid, data):
+    # Already handled in routes
+    pass
+
+
+@sio.event
+async def conversation_updated(sid, data):
+    # Already handled in routes
+    pass
+
+
+@sio.event
+async def conversation_deleted(sid, data):
+    # Already handled in routes
+    pass
+
+
+@sio.event
+async def new_message(sid, data):
+    # Already handled in routes
+    pass
+
+
+@sio.event
+async def message_updated(sid, data):
+    # Already handled in routes
+    pass
+
+
+@sio.event
+async def message_deleted(sid, data):
+    # Already handled in routes
+    pass

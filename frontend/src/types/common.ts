@@ -57,8 +57,8 @@ export type ImageType = {
 }
 
 export type PageginationFilter = {
-  page: number
-  limit: number
+  page?: number
+  limit?: number
 }
 
 export type CategoryFilter = PageginationFilter & {
@@ -79,4 +79,8 @@ export interface Contact {
   gender?: string;
   birthDate?: string;
   coverImage?: string;
+}
+
+export type UserFilter = PageginationFilter & {
+  email?: string
 }

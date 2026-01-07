@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.db.base import Base
 
 engine = create_async_engine(
-    settings.POSTGRES_DB_URL,
+    settings.SQLALCHEMY_DATABASE_URI,
     echo=True,  # 👈 bật log SQL
     pool_pre_ping=True,
     pool_recycle=3600,  # 1h
